@@ -1,2 +1,2 @@
-# sawc-embeded-app
-Smart Automatic Watering Can
+# Smart Automatic Watering Can
+## Embedded application - front-end

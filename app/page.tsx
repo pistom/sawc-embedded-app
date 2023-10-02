@@ -10,7 +10,7 @@ export default function Home() {
   const [isOn, setIsOn] = useState(false);
 
   const handleClick = () => {
-    fetch(`http://localhost:3001/output/17/${isOn ? 'off' : 'on'}`)
+    fetch(`http://${process.env.controllerIP}:3001/output/17/${isOn ? 'off' : 'on'}`)
       .then(() => setIsOn(!isOn))
       .catch(error => console.error(error));
   };

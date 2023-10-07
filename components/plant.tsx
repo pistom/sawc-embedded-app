@@ -1,34 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function Plant({ plant }: { plant: number }) {
+export default function Plant({ plant, socket, device }: { plant: number, socket: any, device: string }) {
 
   const [isOn, setIsOn] = useState<boolean>(false);
 
-  const handleClick = (plant: number, duration: number) => {
-    if (!isOn) {
-      setIsOn(true);
-      console.log(`Plant ${plant} start watering for ${duration} seconds`);
-      fetch(`http://${process.env.controllerIP}:3001/water/MODULE_01/${plant}/${duration}`)
-        .then((response) => { return response.json(); })
-        .then((data) => {
-          if (data.status === 'success') {
-            console.log(`Plant ${plant} watering completed`);
-            setIsOn(false);
-          }
-        })
-        .catch(error => console.error(error));
-    } else {
-      fetch(`http://${process.env.controllerIP}:3001/stop-water/MODULE_01/${plant}`)
-        .then((response) => { return response.json(); })
-        .then((data) => {
-          if (data.status === 'aborted') {
-            console.log(`Plant ${plant} watering aborted`);
-            setIsOn(false);
-          }
-        })
-        .catch(error => console.error(error));
-    }
+  useEffect(() => {
+    socket && socket.on("message", (newMessage: any) => {
+      if (newMessage.device === device && newMessage.output === plant) {
+        console.log('set is on')
+        setIsOn(false);
+      }
+    });
+  }, [socket]);
+
+  const handleMessageSubmit = (output: number, duration: number) => {
+    setIsOn(true);
+    socket.emit("message", { action: 'water', device, output, duration });
   };
+
   return (
     <div key={`plant_${plant}`}>
       Plant {plant} <input
@@ -37,7 +26,7 @@ export default function Plant({ plant }: { plant: number }) {
         role="switch"
         id={`plant_${plant}`}
         checked={isOn}
-        onChange={() => handleClick(plant, 5)} />
+        onChange={() => handleMessageSubmit(plant, 2)} />
       <label
         className="inline-block pl-[0.15rem] hover:cursor-pointer"
         htmlFor={`plant_${plant}`}

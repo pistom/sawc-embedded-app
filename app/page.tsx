@@ -2,16 +2,24 @@
 
 import Plant from '@/components/plant';
 import { useEffect, useState } from 'react';
+import io from "socket.io-client";
 
 export default function Home() {
-  useEffect(() => {
-    document.title = "Smart Automatic Watering Controller"; // set the page title
-  }, []);
+  const [socket, setSocket] = useState<any>(null);
 
+  useEffect(() => {
+    const newSocket = io(`${process.env.controllerIP}:3001`, {
+      transports: ["websocket"],
+    });
+    newSocket.on("connect", () => {
+      console.log("Connected to WebSocket server");
+    });
+    setSocket(newSocket);
+  }, []);
 
   const handleGpioClick = (state: boolean) => {
     fetch(`http://${process.env.controllerIP}:3001/gpio/10/${state ? 'on' : 'off'}`)
-      .then(() => console.log('GPIO17 triggered'))
+      .then(() => console.log('GPIO10 triggered'))
       .catch(error => console.error(error));
   }
 
@@ -25,7 +33,7 @@ export default function Home() {
       </header>
       <div>
         {[1, 2, 3, 4].map((plant) => (
-          <Plant key={`plant_${plant}`} plant={plant} />
+          <Plant socket={socket} device={plant <= 2 ? 'MODULE_01' : 'MODULE_02'} key={`plant_${plant}`} plant={plant} />
         ))}
         <button onClick={() => handleGpioClick(true)}>GPIO10 on</button><br />
         <button onClick={() => handleGpioClick(false)}>GPIO10 off</button>

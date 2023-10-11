@@ -32,11 +32,23 @@ export default function Home() {
         </h1>
       </header>
       <div>
-        {[1, 2, 3, 4].map((plant) => (
-          <Plant socket={socket} device={plant <= 2 ? 'MODULE_01' : 'MODULE_02'} key={`plant_${plant}`} plant={plant} />
-        ))}
-        <button onClick={() => handleGpioClick(true)}>GPIO10 on</button><br />
-        <button onClick={() => handleGpioClick(false)}>GPIO10 off</button>
+        <div>
+          MODULE 1
+          {[1, 2, 3, 4, 12].map((output) => (
+            <Plant socket={socket} device={'MODULE_01'} key={`plant_${output}`} output={output} />
+          ))}
+        </div>
+        <div>
+          MODULE 2
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((output) => (
+            <Plant socket={socket} device={'MODULE_02'} key={`plant_${output}`} output={output} />
+          ))}
+        </div>
+        <div>
+          GPIO TEST<br />
+          <button onClick={() => handleGpioClick(true)}>GPIO10 on</button><br />
+          <button onClick={() => handleGpioClick(false)}>GPIO10 off</button>
+        </div>
       </div>
     </div>
   );

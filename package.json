@@ -11,10 +11,13 @@
   "dependencies": {
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
+    "bufferutil": "^4.0.7",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "socket.io-client": "^4.7.2"
+    "socket.io-client": "^4.7.2",
+    "utf-8-validate": "^5.0.10",
+    "ws": "^8.14.2"
   },
   "devDependencies": {
     "@types/node": "latest",

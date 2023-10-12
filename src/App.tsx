@@ -1,14 +1,12 @@
-'use client'
-
-import Plant from '@/components/plant';
+import Plant from './components/plant';
 import { useEffect, useState } from 'react';
-import io from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 
-export default function Home() {
-  const [socket, setSocket] = useState<any>(null);
+function App() {
+  const [socket, setSocket] = useState<Socket|null>(null);
 
   useEffect(() => {
-    const newSocket = io(`${process.env.controllerIP}:3001`, {
+    const newSocket = io(`${window.location.hostname}:3001`, {
       transports: ["websocket"],
     });
     newSocket.on("connect", () => {
@@ -18,7 +16,7 @@ export default function Home() {
   }, []);
 
   const handleGpioClick = (state: boolean) => {
-    fetch(`http://${process.env.controllerIP}:3001/gpio/10/${state ? 'on' : 'off'}`)
+    fetch(`http://${window.location.hostname}:3001/gpio/10/${state ? 'on' : 'off'}`)
       .then(() => console.log('GPIO10 triggered'))
       .catch(error => console.error(error));
   }
@@ -27,7 +25,6 @@ export default function Home() {
     <div className="App">
       <header className="App-header">
         <h1 data-testid="app-logo">
-          <img src="/logo.svg" alt="Logo" className='App-logo' />
           Smart Automatic Watering Controller
         </h1>
       </header>
@@ -53,3 +50,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default App

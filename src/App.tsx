@@ -1,9 +1,25 @@
 import Plant from './components/plant';
 import { useEffect, useState } from 'react';
 import io, { Socket } from "socket.io-client";
+import getWateringDevicesFromConfig from './helpers/config';
 
 function App() {
-  const [socket, setSocket] = useState<Socket|null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [config, setConfig] = useState<Config>({ devices: {} });
+  const [devices, setDevices] = useState<DeviceConfig[]>([]);
+
+  useEffect(() => {
+    fetch(`http://${window.location.hostname}:3001/config`)
+      .then((response) => response.json())
+      .then((data) => {
+        setConfig(data.config);
+      })
+      .catch(error => console.error(error));
+  }, []);
+
+  useEffect(() => {
+    setDevices(getWateringDevicesFromConfig(config));
+  }, [config]);
 
   useEffect(() => {
     const newSocket = io(`${window.location.hostname}:3001`, {
@@ -13,13 +29,10 @@ function App() {
       console.log("Connected to WebSocket server");
     });
     setSocket(newSocket);
+    return () => {
+      newSocket.close();
+    }
   }, []);
-
-  const handleGpioClick = (state: boolean) => {
-    fetch(`http://${window.location.hostname}:3001/gpio/10/${state ? 'on' : 'off'}`)
-      .then(() => console.log('GPIO10 triggered'))
-      .catch(error => console.error(error));
-  }
 
   return (
     <div className="App">
@@ -29,23 +42,16 @@ function App() {
         </h1>
       </header>
       <div>
-        <div>
-          MODULE 1
-          {[1, 2, 3, 4, 12].map((output) => (
-            <Plant socket={socket} device={'MODULE_01'} key={`plant_${output}`} output={output} />
-          ))}
-        </div>
-        <div>
-          MODULE 2
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((output) => (
-            <Plant socket={socket} device={'MODULE_02'} key={`plant_${output}`} output={output} />
-          ))}
-        </div>
-        <div>
-          GPIO TEST<br />
-          <button onClick={() => handleGpioClick(true)}>GPIO10 on</button><br />
-          <button onClick={() => handleGpioClick(false)}>GPIO10 off</button>
-        </div>
+        {devices && devices.map((device: DeviceConfig) => (
+          <div className="module" key={device.id}>
+            <h2>{device.name}</h2>
+            <div className="devices">
+              {device.outputs.map((output: OutputConfig) => (
+                <Plant socket={socket} device={device.id} key={`plant_${device.id}_${output.id}`} output={output.id} />
+              ))}
+            </div>
+          </div>))
+        }
       </div>
     </div>
   );

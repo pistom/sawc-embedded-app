@@ -1,0 +1,31 @@
+.module {
+}
+.module .devices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.module .devices .device {
+  width: 200px;
+  border: 1px solid greenyellow;
+  padding: 10px;
+  transition: all .25s;
+}
+.module .devices .device .form {
+  display: flex;
+}
+.module .devices .device .form input {
+  width: 40px;
+}
+.module .devices .device .status {
+  height: 20px;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.module .devices .device.is-watering {
+  background: greenyellow;
+}
+.module .devices .device.is-scheduled {
+  background: yellow;
+}

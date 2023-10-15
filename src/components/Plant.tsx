@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Socket, } from "socket.io-client";
-import Timer from "./timer";
+import { socket } from '../socket.js';
+import Timer from "./Timer.js";
 
-export default function Plant({ output, socket, device }: { output: string, socket: Socket | null, device: string }) {
+export default function Plant({ output, device }: { output: string, device: string }) {
 
   const [isOn, setIsOn] = useState<boolean>(false);
   const [isWatering, setIsWatering] = useState<boolean>(false);
@@ -34,7 +34,7 @@ export default function Plant({ output, socket, device }: { output: string, sock
         }
       }
     });
-  }, [device, output, socket]);
+  }, [device, output]);
 
   const handleMessageSubmit = (output: string, duration: number) => {
     if (!isOn) {
@@ -51,7 +51,7 @@ export default function Plant({ output, socket, device }: { output: string, sock
     <div className={`device ${isWatering ? 'is-watering' : ''} ${wateringIn > 0 ? 'is-scheduled' : ''}`}>
       Plant {output}
       <div className="form">
-        <input type="number" disabled={isWatering || wateringIn > 0} value={wateringTime} onChange={(e) => setWateringTime(parseInt(e.target.value))} />
+        <input type="number" disabled={isWatering || wateringIn > 0} value={wateringTime} onChange={(e) => setWateringTime(parseInt(e.target.value) || 0)} />
         <button onClick={() => handleMessageSubmit(output, wateringTime)}>{isOn ? "Stop" : "Water"}</button>
       </div>
       <div className="status">

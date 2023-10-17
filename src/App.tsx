@@ -1,44 +1,21 @@
 import Plant from './components/Plant';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { socket } from './socket';
-import getWateringDevicesFromConfig from './helpers/config';
+import { getWateringDevicesFromConfig, fetchConfig } from './helpers/config';
 
 function App() {
-  // const [socket, setSocket] = useState<Socket | null>(null);
-  const [config, setConfig] = useState<Config>({ devices: {} });
-  const [devices, setDevices] = useState<DeviceConfig[]>([]);
-  const [fetchError, setFetchError] = useState<Error | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
-  const [retryDelay, setRetryDelay] = useState(1);
+  const [config, setConfig] = useState<Config | null>(null);
   const [wsIsConnected, setWsIsConnected] = useState(socket.connected);
 
   useEffect(() => {
-    const fetchConfig = () => {
-      fetch(`http://${window.location.hostname}:3001/config`)
-        .then((response) => response.json())
-        .then((data) => {
-          setConfig(data.config);
-          setFetchError(null);
-        })
-        .catch(error => {
-          let message = `${error.message} (The server may be down. Retrying in ${retryDelay} seconds)`;
-          if (retryCount < 5) {
-            setTimeout(() => {
-              setRetryCount(retryCount + 1);
-              setRetryDelay(Math.round(retryDelay * 1.5));
-            }, retryDelay * 1000);
-          } else {
-            message = `${error.message} (The server may be down)`;
-          }
-          setFetchError({ ...error, message });
-        });
-    };
+    async function fetchConfigData() {
+      setConfig(await fetchConfig());
+    }
+    fetchConfigData();
+  }, []);
 
-    fetchConfig();
-  }, [retryCount, retryDelay]);
-
-  useEffect(() => {
-    setDevices(getWateringDevicesFromConfig(config));
+  const devices = useMemo(() => {
+    return config && getWateringDevicesFromConfig(config);
   }, [config]);
 
   useEffect(() => {
@@ -52,7 +29,7 @@ function App() {
 
   return (
     <div className="App">
-      {fetchError && <div className="error">Error fetching config: {fetchError.message}</div>}
+      {!config && <div className="error">Loading config...</div>}
       {!wsIsConnected && <div className="error">Web Socket client is not connected</div>}
       <header className="App-header">
         <h1 data-testid="app-logo">

@@ -10,10 +10,6 @@ export default function Timer({ duration, label }: TimerProps) {
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    setTimeLeft(duration);
-  }, [duration]);
-
-  useEffect(() => {
     intervalIdRef.current = setInterval(() => {
       setTimeLeft(prevTimeLeft => prevTimeLeft - 1);
     }, 1000);

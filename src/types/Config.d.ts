@@ -19,6 +19,7 @@ type Device = {
 };
 
 type Config = {
+  error?: string;
   devices: {
     [key: string]: Device;
   };

@@ -19,18 +19,3 @@ export const getWateringDevicesFromConfig = (config: Config): DeviceConfig[] => 
 };
 
 export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-export const fetchConfig = async (): Promise<Config> => {
-  try {
-    const response = await fetch(`http://${window.location.hostname}:3001/config`);
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-    const data = await response.json();
-    return data.config;
-  } catch (error) {
-    await sleep(3000);
-    console.log(`Retreiving config failed, retrying in 3 seconds...`);
-  }
-  return await fetchConfig();
-};

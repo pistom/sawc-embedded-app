@@ -1,6 +1,6 @@
 import Plant from './components/Plant';
 import { useMemo } from 'react';
-import { socket } from './socket';
+import socket from './socket';
 import { getWateringDevicesFromConfig } from './helpers/config';
 import { useFetchConfig } from './hooks/useFetchConfig';
 import { useSocket } from './hooks/useSocket';

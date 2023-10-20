@@ -6,7 +6,7 @@ import { useSocket } from "./useSocket";
 import { renderHook } from "@testing-library/react";
 import 'setimmediate';
 
-describe("my awesome project", () => {
+describe("useSocket", () => {
   let io: Server;
   let clientSocket: ClientSocket;
 

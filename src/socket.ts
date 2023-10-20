@@ -1,3 +1,3 @@
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 
-export const socket = io(`${window.location.hostname}:3001`);
+export default io(`${window.location.hostname}:3001`) as Socket;

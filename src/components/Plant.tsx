@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { socket } from '../socket.js';
-import Timer from "./Timer.js";
+import { useCallback, useEffect, useState } from "react";
+import socket from '../socket.ts';
+import Timer from "./Timer";
 
 export default function Plant({ output, device }: { output: string, device: string }) {
 
@@ -9,14 +9,20 @@ export default function Plant({ output, device }: { output: string, device: stri
   const [wateringTime, setWateringTime] = useState<number>(5);
   const [wateringIn, setWateringIn] = useState<number>(0);
 
-  useEffect(() => {
-    socket && socket.on("message", (newMessage) => {
+  interface Message {
+    device: string;
+    output: string;
+    status: string;
+    duration: number;
+    remainingTimes: { [key: string]: { wateringTime: number, wateringIn: number } };
+  }
+  const socketOnCallback = useCallback((newMessage: Message) => {
       if (newMessage.status === "remainingTimes" && newMessage.device === device && newMessage.remainingTimes[output]) {
         setWateringTime(newMessage.remainingTimes[output].wateringTime);
-        setWateringIn(parseInt(newMessage.remainingTimes[output].wateringIn));
+        setWateringIn(newMessage.remainingTimes[output].wateringIn);
+        setIsOn(true);
       }
-      if (newMessage.device === device && newMessage.output === output) {
-        console.dir(newMessage.status);
+    if (newMessage.device === device && newMessage.output === output) {
         switch (newMessage.status) {
           case "done":
           case "aborted":
@@ -26,23 +32,24 @@ export default function Plant({ output, device }: { output: string, device: stri
             setIsWatering(false);
             break;
           case "watering":
+            setIsOn(true);
             setIsWatering(true);
             setWateringTime(newMessage.duration);
             setWateringIn(0);
             break;
         }
       }
-    });
   }, [device, output]);
+
+  useEffect(() => {
+    socket && socket.on("message", socketOnCallback);
+  }, [socketOnCallback]);
 
   const handleMessageSubmit = (output: string, duration: number) => {
     if (!isOn) {
-      setIsOn(true);
       socket && socket.emit("message", { action: 'startWater', device, output, duration });
     } else {
-      setIsOn(false);
       socket && socket.emit("message", { action: 'stopWater', device, output });
-      setIsWatering(false);
     }
   };
 

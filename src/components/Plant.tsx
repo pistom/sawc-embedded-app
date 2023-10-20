@@ -16,21 +16,20 @@ export default function Plant({ output, device }: { output: string, device: stri
         setWateringIn(parseInt(newMessage.remainingTimes[output].wateringIn));
       }
       if (newMessage.device === device && newMessage.output === output) {
+        console.dir(newMessage.status);
         switch (newMessage.status) {
           case "done":
           case "aborted":
+          case "stopped":
             setIsOn(false);
+            setWateringIn(0);
+            setIsWatering(false);
             break;
           case "watering":
             setIsWatering(true);
             setWateringTime(newMessage.duration);
             setWateringIn(0);
             break;
-        }
-        if (newMessage.status === "done" || newMessage.status === "aborted") {
-          setIsOn(false);
-          setWateringIn(0);
-          setIsWatering(false);
         }
       }
     });

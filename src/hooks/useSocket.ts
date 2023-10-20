@@ -10,7 +10,7 @@ export function useSocket(socket: Socket) {
       socket.off('connect', () => setConnected(true));
       socket.off('disconnect', () => setConnected(false));
     };
-  }, [socket]);
+  }, [socket, socket.connected]);
 
   return connected;
 }

@@ -7,6 +7,7 @@ export default function Plant({ output, device }: { output: string, device: stri
   const [isOn, setIsOn] = useState<boolean>(false);
   const [isWatering, setIsWatering] = useState<boolean>(false);
   const [wateringTime, setWateringTime] = useState<number>(5);
+  const [remainingWateringTime, setRemainingWateringTime] = useState<number>(0);
   const [wateringIn, setWateringIn] = useState<number>(0);
 
   interface Message {
@@ -17,28 +18,34 @@ export default function Plant({ output, device }: { output: string, device: stri
     remainingTimes: { [key: string]: { wateringTime: number, wateringIn: number } };
   }
   const socketOnCallback = useCallback((newMessage: Message) => {
-      if (newMessage.status === "remainingTimes" && newMessage.device === device && newMessage.remainingTimes[output]) {
-        setWateringTime(newMessage.remainingTimes[output].wateringTime);
+    if (newMessage.status === "remainingTimes" && newMessage.device === device && newMessage.remainingTimes[output]) {
+      setWateringTime(newMessage.remainingTimes[output].wateringTime);
+      if (newMessage.remainingTimes[output].wateringIn < 0) {
+        setIsWatering(true);
+        setRemainingWateringTime(newMessage.remainingTimes[output].wateringTime + newMessage.remainingTimes[output].wateringIn);
+      } else {
         setWateringIn(newMessage.remainingTimes[output].wateringIn);
-        setIsOn(true);
+        setWateringTime(newMessage.remainingTimes[output].wateringTime);
       }
+      setIsOn(true);
+    }
     if (newMessage.device === device && newMessage.output === output) {
-        switch (newMessage.status) {
-          case "done":
-          case "aborted":
-          case "stopped":
-            setIsOn(false);
-            setWateringIn(0);
-            setIsWatering(false);
-            break;
-          case "watering":
-            setIsOn(true);
-            setIsWatering(true);
-            setWateringTime(newMessage.duration);
-            setWateringIn(0);
-            break;
-        }
+      switch (newMessage.status) {
+        case "done":
+        case "aborted":
+        case "stopped":
+          setIsOn(false);
+          setWateringIn(0);
+          setIsWatering(false);
+          break;
+        case "watering":
+          setIsOn(true);
+          setIsWatering(true);
+          setRemainingWateringTime(newMessage.duration);
+          setWateringIn(0);
+          break;
       }
+    }
   }, [device, output]);
 
   useEffect(() => {
@@ -54,15 +61,27 @@ export default function Plant({ output, device }: { output: string, device: stri
   };
 
   return (
-    <div className={`device ${isWatering ? 'is-watering' : ''} ${wateringIn > 0 ? 'is-scheduled' : ''}`}>
-      Plant {output}
-      <div className="form">
-        <input type="number" disabled={isWatering || wateringIn > 0} value={wateringTime} onChange={(e) => setWateringTime(parseInt(e.target.value) || 0)} />
-        <button onClick={() => handleMessageSubmit(output, wateringTime)}>{isOn ? "Stop" : "Water"}</button>
-      </div>
-      <div className="status">
-        {wateringIn > 0 && (<Timer label="Scheduled" duration={wateringIn} />)}
-        {isWatering && <Timer label="Watering" duration={wateringTime} />}
+    <div className="plant">
+      <img className="image" src="/plant.svg" alt="" />
+      <div className="details">
+        <h5 className="title">Output {output}</h5>
+        <div className="flex gap-3 mb-3 font-normal text-gray-700">
+          <input className="quantity" type="number" disabled={isWatering || wateringIn > 0} value={wateringTime} onChange={(e) => setWateringTime(parseInt(e.target.value) || 0)} />
+          <button className="waterBtn" onClick={() => handleMessageSubmit(output, wateringTime)}>
+            Water
+          </button>
+        </div>
+        {isOn &&
+            <div className={`watering ${wateringIn > 0 && 'scheduled'}`}>
+              <h2 className="text-xl mt-2 mb-4">
+                {wateringIn > 0 && (<Timer label="Scheduled" duration={wateringIn} />)}
+                {isWatering && <Timer label="Watering" duration={remainingWateringTime} />}
+              </h2>
+              <button className="stopBtn" onClick={() => handleMessageSubmit(output, wateringTime)}>
+                Stop
+              </button>
+            </div>
+        }
       </div>
     </div>
   )

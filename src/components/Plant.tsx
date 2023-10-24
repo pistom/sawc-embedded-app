@@ -61,12 +61,13 @@ export default function Plant({ output, device }: { output: string, device: stri
   };
 
   return (
+    <div className="w-full md:w-1/2 lg:w-1/3">
     <div className="plant">
       <img className="image" src="/plant.svg" alt="" />
       <div className="details">
         <h5 className="title">Output {output}</h5>
         <div className="flex gap-3 mb-3 font-normal text-gray-700">
-          <input className="quantity" type="number" disabled={isWatering || wateringIn > 0} value={wateringTime} onChange={(e) => setWateringTime(parseInt(e.target.value) || 0)} />
+          <input className="quantity w-24" type="number" disabled={isWatering || wateringIn > 0} value={wateringTime} onChange={(e) => setWateringTime(parseInt(e.target.value) || 0)} />
           <button className="waterBtn" onClick={() => handleMessageSubmit(output, wateringTime)}>
             Water
           </button>
@@ -83,6 +84,7 @@ export default function Plant({ output, device }: { output: string, device: stri
             </div>
         }
       </div>
+    </div>
     </div>
   )
 }

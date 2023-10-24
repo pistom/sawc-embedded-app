@@ -2,14 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+.plants {
+  @apply inline-flex flex-wrap w-full;
+}
 .plant {
-  @apply flex flex-row items-center bg-white border border-gray-200 rounded-lg shadow;
+  @apply flex flex-row items-center bg-white border border-gray-200 rounded-lg shadow ml-4 mr-4 mb-4;
+}
+@screen md {
+  .plants > div:nth-child(odd) .plant {
+    @apply mr-2 ml-0;
+  }
+  .plants > div:nth-child(even) .plant {
+    @apply ml-2 mr-0;
+  }
+}
+@screen lg {
+  .plants > div:nth-child(3n-2) .plant {
+    @apply ml-0 mr-2;
+  }
+  .plants > div:nth-child(3n-1) .plant {
+    @apply ml-1 mr-1;
+  }
+  .plants > div:nth-child(3n) .plant {
+    @apply ml-2 mr-2;
+  }
 }
 .plant .image {
-  @apply object-cover w-full rounded-t-lg h-96 h-auto w-28 rounded-none rounded-l-lg
+  @apply object-cover w-full rounded-t-lg h-96 h-auto w-28 rounded-none rounded-l-lg;
 }
 .plant .details {
-  @apply flex justify-around flex-col justify-between p-4 leading-normal relative h-full ;
+  @apply flex justify-around flex-col justify-between p-4 leading-normal relative h-full;
 }
 .plant .title {
   @apply mb-2 text-2xl font-bold tracking-tight text-gray-900;
@@ -18,16 +40,16 @@
   @apply items-center px-3 py-2 text-sm font-medium rounded-lg border-solid border border-gray-400;
 }
 .plant .waterBtn {
-   @apply items-center px-3 py-2 text-sm font-medium text-center text-white bg-teal-700 rounded-lg;
+  @apply items-center px-3 py-2 text-sm font-medium text-center text-white bg-teal-700 rounded-lg;
 }
 .plant .waterBtn:hover {
-   @apply bg-teal-800;
+  @apply bg-teal-800;
 }
 .plant .waterBtn:focus {
-   @apply outline-none ring-teal-300;
+  @apply outline-none ring-teal-300;
 }
 .plant .stopBtn {
-  @apply items-center px-3 py-2 text-sm font-medium text-center text-white bg-lime-700 rounded-lg; 
+  @apply items-center px-3 py-2 text-sm font-medium text-center text-white bg-lime-700 rounded-lg;
 }
 .plant .stopBtn:hover {
   @apply bg-lime-800;
@@ -36,7 +58,7 @@
   @apply ring-4 outline-none ring-lime-300;
 }
 .plant .scheduled .stopBtn {
-  @apply bg-amber-700; 
+  @apply bg-amber-700;
 }
 .plant .scheduled .stopBtn:hover {
   @apply bg-amber-800;

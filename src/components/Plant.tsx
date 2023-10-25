@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import socket from '../socket.ts';
 import Timer from "./Timer";
+import { Cog6ToothIcon } from '@heroicons/react/24/solid'
 
-export default function Plant({ output, device }: { output: string, device: string }) {
+
+export default function Plant({ id, device, name, image }: { id: string, device: string, name: string | undefined, image: string | undefined }) {
 
   const [isOn, setIsOn] = useState<boolean>(false);
   const [isWatering, setIsWatering] = useState<boolean>(false);
-  const [wateringTime, setWateringTime] = useState<number>(5);
+  const [wateringVolume, setWateringVolume] = useState<number>(5);
+  const [initialWateringTime, setInitialWateringTime] = useState<number>(0);
   const [remainingWateringTime, setRemainingWateringTime] = useState<number>(0);
   const [wateringIn, setWateringIn] = useState<number>(0);
 
@@ -15,21 +18,22 @@ export default function Plant({ output, device }: { output: string, device: stri
     output: string;
     status: string;
     duration: number;
-    remainingTimes: { [key: string]: { wateringTime: number, wateringIn: number } };
+    remainingTimes: { [key: string]: { wateringTime: number, wateringIn: number, wateringVolume: number } };
   }
   const socketOnCallback = useCallback((newMessage: Message) => {
-    if (newMessage.status === "remainingTimes" && newMessage.device === device && newMessage.remainingTimes[output]) {
-      setWateringTime(newMessage.remainingTimes[output].wateringTime);
-      if (newMessage.remainingTimes[output].wateringIn < 0) {
+    if (newMessage.status === "remainingTimes" && newMessage.device === device && newMessage.remainingTimes[id]) {
+      setWateringVolume(newMessage.remainingTimes[id].wateringVolume);
+      if (newMessage.remainingTimes[id].wateringIn < 0) {
         setIsWatering(true);
-        setRemainingWateringTime(newMessage.remainingTimes[output].wateringTime + newMessage.remainingTimes[output].wateringIn);
+        setRemainingWateringTime(newMessage.remainingTimes[id].wateringTime + newMessage.remainingTimes[id].wateringIn);
       } else {
-        setWateringIn(newMessage.remainingTimes[output].wateringIn);
-        setWateringTime(newMessage.remainingTimes[output].wateringTime);
+        setWateringIn(newMessage.remainingTimes[id].wateringIn);
+        setWateringVolume(newMessage.remainingTimes[id].wateringVolume);
+        setInitialWateringTime((initialWateringTime) => initialWateringTime === 0 ? newMessage.remainingTimes[id].wateringTime : initialWateringTime);
       }
       setIsOn(true);
     }
-    if (newMessage.device === device && newMessage.output === output) {
+    if (newMessage.device === device && newMessage.output === id) {
       switch (newMessage.status) {
         case "done":
         case "aborted":
@@ -41,48 +45,50 @@ export default function Plant({ output, device }: { output: string, device: stri
         case "watering":
           setIsOn(true);
           setIsWatering(true);
+          setInitialWateringTime((initialWateringTime) => initialWateringTime === 0 ? newMessage.duration : initialWateringTime);
           setRemainingWateringTime(newMessage.duration);
           setWateringIn(0);
           break;
       }
     }
-  }, [device, output]);
+  }, [device, id]);
+
+  const handleWateringVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = parseInt(e.target.value) || 0;
+      setWateringVolume(value);
+      setInitialWateringTime(0);
+  }
 
   useEffect(() => {
     socket && socket.on("message", socketOnCallback);
   }, [socketOnCallback]);
 
-  const handleMessageSubmit = (output: string, duration: number) => {
+  const handleMessageSubmit = (id: string, volume: number) => {
     if (!isOn) {
-      socket && socket.emit("message", { action: 'startWater', device, output, duration });
+      socket && socket.emit("message", { action: 'startWater', device, output: id, volume });
     } else {
-      socket && socket.emit("message", { action: 'stopWater', device, output });
+      socket && socket.emit("message", { action: 'stopWater', device, output: id });
     }
   };
 
   return (
     <div className="w-full md:w-1/2 lg:w-1/3">
     <div className="plant">
-      <img className="image" src="/plant.svg" alt="" />
+      <img className="image" src={image ? `/plants/${image}` : "/plant.svg"} alt="" />
       <div className="details">
-        <h5 className="title">Output {output}</h5>
+        <Cog6ToothIcon className="h-5 w-5 text-slate-300 absolute top-2 right-2" />
+        <h5 className="title">{name ?? `Output ${id}`}</h5>
         <div className="flex gap-3 mb-3 font-normal text-gray-700">
-          <input className="quantity w-24" type="number" disabled={isWatering || wateringIn > 0} value={wateringTime} onChange={(e) => setWateringTime(parseInt(e.target.value) || 0)} />
-          <button className="waterBtn" onClick={() => handleMessageSubmit(output, wateringTime)}>
-            Water
+          <div className="flex items-center">
+            <input className="volume" type="number" disabled={isWatering || wateringIn > 0} value={wateringVolume} onChange={handleWateringVolume} />
+            <span className="volume-label">ml</span>
+          </div>
+          <button className={`waterBtn ${!isOn ? `bg-emerald-700` : `bg-slate-700`}`} onClick={() => handleMessageSubmit(id, wateringVolume)}>
+            {!isOn ? `Water` : wateringIn > 0 ? `Abort` : `Stop`}
           </button>
         </div>
-        {isOn &&
-            <div className={`watering ${wateringIn > 0 && 'scheduled'}`}>
-              <h2 className="text-xl mt-2 mb-4">
-                {wateringIn > 0 && (<Timer label="Scheduled" duration={wateringIn} />)}
-                {isWatering && <Timer label="Watering" duration={remainingWateringTime} />}
-              </h2>
-              <button className="stopBtn" onClick={() => handleMessageSubmit(output, wateringTime)}>
-                Stop
-              </button>
-            </div>
-        }
+        {wateringIn > 0 && (<Timer type="scheduled" duration={wateringIn} initial={initialWateringTime}/>)}
+        {isWatering && <Timer type="current" duration={remainingWateringTime} initial={initialWateringTime} />}
       </div>
     </div>
     </div>

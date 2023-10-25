@@ -10,10 +10,10 @@ export default function Device({ device }: { device: DeviceConfig }) {
 
   return (
     <div className="" key={device.id}>
-      <h2 className="text-xl mb-4">{device.name}</h2>
+      <h2 className="text-2xl font-bold mb-4 mx-4 md:mx-0">{device.name}</h2>
       <div className="plants">
         {device.outputs.map((output: OutputConfig) => (
-          <Plant device={device.id} key={`plant_${device.id}_${output.id}`} output={output.id} />
+          <Plant device={device.id} key={`plant_${device.id}_${output.id}`} id={output.id} name={output.name} image={output.image} />
         ))}
       </div>
     </div>

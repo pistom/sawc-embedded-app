@@ -1,12 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer base {
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"] {
+    -webkit-appearance: none;
+    margin: 0;
+    -moz-appearance: textfield !important;
+  }
+}
 
 .plants {
   @apply inline-flex flex-wrap w-full;
 }
 .plant {
-  @apply flex flex-row items-center bg-white border border-gray-200 rounded-lg shadow ml-4 mr-4 mb-4;
+  @apply flex flex-row bg-white border border-gray-200 rounded-lg shadow ml-4 mr-4 mb-4 items-stretch;
 }
 @screen md {
   .plants > div:nth-child(odd) .plant {
@@ -14,6 +23,9 @@
   }
   .plants > div:nth-child(even) .plant {
     @apply ml-2 mr-0;
+  }
+  .plant {
+    @apply flex-col;
   }
 }
 @screen lg {
@@ -28,22 +40,33 @@
   }
 }
 .plant .image {
-  @apply object-cover w-full rounded-t-lg h-96 h-auto w-28 rounded-none rounded-l-lg;
+  @apply object-cover rounded-t-lg w-32 h-max rounded-none rounded-l-lg;
+}
+@screen md {
+  .plant .image {
+    @apply w-full h-80;
+  }
 }
 .plant .details {
-  @apply flex justify-around flex-col justify-between p-4 leading-normal relative h-full;
+  @apply flex flex-col p-4 leading-normal relative w-full;
 }
 .plant .title {
   @apply mb-2 text-2xl font-bold tracking-tight text-gray-900;
 }
-.plant .quantity {
-  @apply items-center px-3 py-2 text-sm font-medium rounded-lg border-solid border border-gray-400;
+.plant .volume {
+  @apply font-bold items-center text-right pl-3 py-2 text-sm font-medium rounded-l-lg border-solid border border-gray-400 border-r-0 w-14;
+}
+.plant .volume-label {
+  @apply pr-3 text-sm pl-1 py-2 text-sm font-medium rounded-r-lg border-solid border border-gray-400 border-l-0;
+}
+.plant .volume:focus {
+  @apply outline-none;
 }
 .plant .waterBtn {
-  @apply items-center px-3 py-2 text-sm font-medium text-center text-white bg-teal-700 rounded-lg;
+  @apply items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg;
 }
 .plant .waterBtn:hover {
-  @apply bg-teal-800;
+  /* @apply bg-teal-800; */
 }
 .plant .waterBtn:focus {
   @apply outline-none ring-teal-300;
@@ -72,36 +95,15 @@
 .plant .watering.scheduled {
   @apply bg-amber-300/[.95];
 }
-/*
-.module {
+.timer {
+  @apply w-full bg-slate-200 text-right absolute bottom-0 right-0;
 }
-.module .devices {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+.timer .label {
+  @apply absolute bottom-2 right-2;
 }
-.module .devices .device {
-  width: 200px;
-  border: 1px solid greenyellow;
-  padding: 10px;
-  transition: all .25s;
+.timer .countdown {
+  @apply w-full h-2 bg-emerald-300 transition-all duration-1000 ease-linear;
 }
-.module .devices .device .form {
-  display: flex;
+.timer .countdown.scheduled {
+  @apply bg-slate-700;
 }
-.module .devices .device .form input {
-  width: 40px;
-}
-.module .devices .device .status {
-  height: 20px;
-  font-size: 12px;
-  margin-top: 10px;
-}
-
-.module .devices .device.is-watering {
-  background: greenyellow;
-}
-.module .devices .device.is-scheduled {
-  background: yellow;
-}
-*/

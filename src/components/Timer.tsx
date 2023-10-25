@@ -2,11 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 
 type TimerProps = {
   duration: number;
-  label: string;
+  type: string;
+  initial: number;
 };
 
-export default function Timer({ duration, label }: TimerProps) {
+export default function Timer({ duration, type, initial }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
+  const [width, setWidth] = useState('100%');
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -24,20 +26,23 @@ export default function Timer({ duration, label }: TimerProps) {
       intervalIdRef.current && clearInterval(intervalIdRef.current);
       setTimeLeft(0);
     }
-  }, [timeLeft]);
+    if (type === 'current') {
+      setWidth(`${(timeLeft/initial)* 100}%`);
+    }
+  }, [timeLeft, initial, type]);
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.ceil(time % 60);
     return <>
-      {minutes > 0 || seconds > 0 ? label + ' ' : ''}
-      {`${minutes > 0 ? `${minutes.toString()}:` : ''}${seconds > 0 ? `${seconds.toString().padStart(2, '0')}sec` : ''}`}
+      {`${minutes > 0 ? `${minutes.toString()}:` : ''}${`${seconds.toString().padStart(2, '0')}`}`}
     </>
   };
 
   return (
-    <span>
-      {formatTime(timeLeft)}
-    </span>
+    <div className="timer">
+      <div className={`label ${type === 'scheduled' ? "text-xs":"text-base"}`}>{type === 'scheduled' && `Start in ` }{formatTime(timeLeft)}</div>
+      <div className={`countdown ${type}`} style={{width}}></div>
+    </div>
   );
 }

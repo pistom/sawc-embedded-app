@@ -5,6 +5,8 @@ type Output = {
 type OutputConfig = {
   pin: number;
   id: string;
+  name?: string;
+  image?: string;
 };
 
 type Output = {

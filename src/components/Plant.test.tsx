@@ -10,12 +10,12 @@ import Plant from "./Plant";
 
 describe('<Plant></Plant>', () => {
   it('should render the component', () => {
-    const { container } = render(<Plant device="device" id="output" name="test" image="test" />);
+    const { container } = render(<Plant device="device" id="output" defaultVolume={5} name="test" image="test" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('should call socket on message when component is rendered', () => {
-    render(<Plant device="device" id="output" name="test" image="test" />);
+    render(<Plant defaultVolume={6} device="device" id="output" name="test" image="test" />);
     expect(socket.on).toHaveBeenCalledWith("message", expect.any(Function));
   });
 

@@ -2,25 +2,19 @@ import { useCallback, useEffect, useState } from "react";
 import socket from '../socket.ts';
 import Timer from "./Timer";
 import { Cog6ToothIcon } from '@heroicons/react/24/solid'
+import { Link } from "react-router-dom";
 
 
-export default function Plant({ id, device, name, image }: { id: string, device: string, name: string | undefined, image: string | undefined }) {
+export default function Plant({ id, device, name, image, defaultVolume }: { id: string, device: string, name: string | undefined, image: string | undefined, defaultVolume: number }) {
 
   const [isOn, setIsOn] = useState<boolean>(false);
   const [isWatering, setIsWatering] = useState<boolean>(false);
-  const [wateringVolume, setWateringVolume] = useState<number>(5);
+  const [wateringVolume, setWateringVolume] = useState<number>(defaultVolume);
   const [initialWateringTime, setInitialWateringTime] = useState<number>(0);
   const [remainingWateringTime, setRemainingWateringTime] = useState<number>(0);
   const [wateringIn, setWateringIn] = useState<number>(0);
 
-  interface Message {
-    device: string;
-    output: string;
-    status: string;
-    duration: number;
-    remainingTimes: { [key: string]: { wateringTime: number, wateringIn: number, wateringVolume: number } };
-  }
-  const socketOnCallback = useCallback((newMessage: Message) => {
+  const socketOnCallback = useCallback((newMessage: RemainingTimesMessage) => {
     if (newMessage.status === "remainingTimes" && newMessage.device === device && newMessage.remainingTimes[id]) {
       setWateringVolume(newMessage.remainingTimes[id].wateringVolume);
       if (newMessage.remainingTimes[id].wateringIn < 0) {
@@ -76,7 +70,9 @@ export default function Plant({ id, device, name, image }: { id: string, device:
     <div className="plant">
       <img className="image" src={image ? `/plants/${image}` : "/plant.svg"} alt="" />
       <div className="details">
-        <Cog6ToothIcon className="h-5 w-5 text-slate-300 absolute top-2 right-2" />
+        <Link to={`/output/edit/${device}/${id}`} className="editBtn">
+          <Cog6ToothIcon className="h-5 w-5 text-slate-300 absolute top-2 right-2" />
+        </Link>
         <h5 className="title">{name ?? `Output ${id}`}</h5>
         <div className="flex gap-3 mb-3 font-normal text-gray-700">
           <div className="flex items-center">

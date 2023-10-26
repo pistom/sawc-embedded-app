@@ -62,8 +62,8 @@
 .plant .volume:focus {
   @apply outline-none;
 }
-.plant .waterBtn {
-  @apply items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg;
+.plant .waterBtn, .plant .saveBtn {
+  @apply items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-teal-800;
 }
 .plant .waterBtn:hover {
   /* @apply bg-teal-800; */

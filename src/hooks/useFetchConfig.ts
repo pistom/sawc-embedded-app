@@ -24,5 +24,5 @@ export function useFetchConfig() {
     }
     fetchConfigData();
   }, []);
-  return config;
+  return [config, setConfig] as const;
 }

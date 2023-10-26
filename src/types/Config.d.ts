@@ -7,6 +7,7 @@ type OutputConfig = {
   id: string;
   name?: string;
   image?: string;
+  defaultVolume?: number; // mililiters
 };
 
 type Output = {

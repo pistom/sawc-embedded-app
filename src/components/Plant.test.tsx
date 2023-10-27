@@ -1,4 +1,6 @@
 import  socket  from '../socket.ts';
+import { MemoryRouter } from 'react-router-dom';
+
 jest.mock('../socket.ts', () => {
   return {
     __esModule: true,
@@ -10,12 +12,22 @@ import Plant from "./Plant";
 
 describe('<Plant></Plant>', () => {
   it('should render the component', () => {
-    const { container } = render(<Plant device="device" id="output" defaultVolume={5} name="test" image="test" />);
+    const output = { id: "output", name: "test", image: "test", defaultVolume: 5, pin: 3};
+    const { container } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <Plant deviceDefaultVolume={50} device="device" output={output} />
+      </MemoryRouter>
+    );
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('should call socket on message when component is rendered', () => {
-    render(<Plant defaultVolume={6} device="device" id="output" name="test" image="test" />);
+    const output = { id: "output", name: "test", image: "test", defaultVolume: 5, pin: 3};
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Plant deviceDefaultVolume={100} device="device" output={output} />
+      </MemoryRouter>
+    );
     expect(socket.on).toHaveBeenCalledWith("message", expect.any(Function));
   });
 

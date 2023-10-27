@@ -5,11 +5,11 @@ import { Cog6ToothIcon } from '@heroicons/react/24/solid'
 import { Link } from "react-router-dom";
 
 
-export default function Plant({ id, device, name, image, defaultVolume }: { id: string, device: string, name: string | undefined, image: string | undefined, defaultVolume: number }) {
-
+export default function Plant({ device, output, deviceDefaultVolume }: { device: string, output: OutputConfig, deviceDefaultVolume: number }) {
+  const { id, name, image, defaultVolume } = output;
   const [isOn, setIsOn] = useState<boolean>(false);
   const [isWatering, setIsWatering] = useState<boolean>(false);
-  const [wateringVolume, setWateringVolume] = useState<number>(defaultVolume);
+  const [wateringVolume, setWateringVolume] = useState<number>(defaultVolume || deviceDefaultVolume);
   const [initialWateringTime, setInitialWateringTime] = useState<number>(0);
   const [remainingWateringTime, setRemainingWateringTime] = useState<number>(0);
   const [wateringIn, setWateringIn] = useState<number>(0);
@@ -20,6 +20,7 @@ export default function Plant({ id, device, name, image, defaultVolume }: { id: 
       if (newMessage.remainingTimes[id].wateringIn < 0) {
         setIsWatering(true);
         setRemainingWateringTime(newMessage.remainingTimes[id].wateringTime + newMessage.remainingTimes[id].wateringIn);
+        setInitialWateringTime(newMessage.remainingTimes[id].wateringTime);
       } else {
         setWateringIn(newMessage.remainingTimes[id].wateringIn);
         setWateringVolume(newMessage.remainingTimes[id].wateringVolume);
@@ -48,9 +49,9 @@ export default function Plant({ id, device, name, image, defaultVolume }: { id: 
   }, [device, id]);
 
   const handleWateringVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = parseInt(e.target.value) || 0;
-      setWateringVolume(value);
-      setInitialWateringTime(0);
+    const value = parseInt(e.target.value) || 0;
+    setWateringVolume(value);
+    setInitialWateringTime(0);
   }
 
   useEffect(() => {
@@ -67,26 +68,26 @@ export default function Plant({ id, device, name, image, defaultVolume }: { id: 
 
   return (
     <div className="w-full md:w-1/2 lg:w-1/3">
-    <div className="plant">
-      <img className="image" src={image ? `/plants/${image}` : "/plant.svg"} alt="" />
-      <div className="details">
-        <Link to={`/output/edit/${device}/${id}`} className="editBtn">
-          <Cog6ToothIcon className="h-5 w-5 text-slate-300 absolute top-2 right-2" />
-        </Link>
-        <h5 className="title">{name ?? `Output ${id}`}</h5>
-        <div className="flex gap-3 mb-3 font-normal text-gray-700">
-          <div className="flex items-center">
-            <input className="volume" type="number" disabled={isWatering || wateringIn > 0} value={wateringVolume} onChange={handleWateringVolume} />
-            <span className="volume-label">ml</span>
+      <div className="plant">
+        <img className="image" src={image ? `/plants/${image}` : "/plant.svg"} alt="" />
+        <div className="details">
+          <Link to={`/output/edit/${device}/${id}`} className="editBtn">
+            <Cog6ToothIcon className="h-5 w-5 text-slate-300 absolute top-2 right-2" />
+          </Link>
+          <h5 className="title">{name ?? `Output ${id}`}</h5>
+          <div className="flex gap-3 mb-3 font-normal text-gray-700">
+            <div className="flex items-center">
+              <input className="volume" type="number" disabled={isWatering || wateringIn > 0} value={wateringVolume} onChange={handleWateringVolume} />
+              <span className="volume-label">ml</span>
+            </div>
+            <button className={`waterBtn ${!isOn ? `bg-emerald-700` : `bg-slate-700`}`} onClick={() => handleMessageSubmit(id, wateringVolume)}>
+              {!isOn ? `Water` : wateringIn > 0 ? `Abort` : `Stop`}
+            </button>
           </div>
-          <button className={`waterBtn ${!isOn ? `bg-emerald-700` : `bg-slate-700`}`} onClick={() => handleMessageSubmit(id, wateringVolume)}>
-            {!isOn ? `Water` : wateringIn > 0 ? `Abort` : `Stop`}
-          </button>
+          {wateringIn > 0 && (<Timer type="scheduled" duration={wateringIn} />)}
+          {isWatering && <Timer type="current" duration={remainingWateringTime} initial={initialWateringTime} />}
         </div>
-        {wateringIn > 0 && (<Timer type="scheduled" duration={wateringIn} initial={initialWateringTime}/>)}
-        {isWatering && <Timer type="current" duration={remainingWateringTime} initial={initialWateringTime} />}
       </div>
-    </div>
     </div>
   )
 }

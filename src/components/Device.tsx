@@ -6,7 +6,7 @@ export default function Device({ device }: { device: DeviceConfig }) {
 
   useEffect(() => {
     socket && socket.emit("message", { action: "getRemainingTimes", device: device.id });
-  }, [device]);
+  });
 
   return (
     <div>
@@ -16,10 +16,8 @@ export default function Device({ device }: { device: DeviceConfig }) {
           <Plant
             device={device.id}
             key={`plant_${device.id}_${output.id}`}
-            id={output.id}
-            name={output.name}
-            image={output.image}
-            defaultVolume={output.defaultVolume || 5}
+            output={output}
+            deviceDefaultVolume={device.settings.defaultVolume}
           />
         ))}
       </div>

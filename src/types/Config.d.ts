@@ -8,6 +8,7 @@ type OutputConfig = {
   name?: string;
   image?: string;
   defaultVolume?: number; // mililiters
+  ratio?: number; // seconds per mililiter
 };
 
 type Output = {
@@ -33,4 +34,10 @@ type DeviceConfig = {
   outputs: OutputConfig[];
   inputs?: unknown;
   id: string;
+  settings: DeviceSettings;
+};
+
+type DeviceSettings = {
+  defaultVolume: number;
+  defaultRatio: number;
 };

@@ -3,10 +3,10 @@ import { useState, useEffect, useRef } from 'react';
 type TimerProps = {
   duration: number;
   type: string;
-  initial: number;
+  initial?: number;
 };
 
-export default function Timer({ duration, type, initial }: TimerProps) {
+export default function Timer({ duration, type, initial = duration }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [width, setWidth] = useState('100%');
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
@@ -19,7 +19,7 @@ export default function Timer({ duration, type, initial }: TimerProps) {
     return () => {
       intervalIdRef.current && clearInterval(intervalIdRef.current);
     };
-  }, [duration]);
+  }, [duration, initial]);
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -29,7 +29,7 @@ export default function Timer({ duration, type, initial }: TimerProps) {
     if (type === 'current') {
       setWidth(`${(timeLeft/initial)* 100}%`);
     }
-  }, [timeLeft, initial, type]);
+  }, [timeLeft, initial, type, duration]);
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);

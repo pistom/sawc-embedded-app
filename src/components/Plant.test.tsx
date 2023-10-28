@@ -13,9 +13,10 @@ import Plant from "./Plant";
 describe('<Plant></Plant>', () => {
   it('should render the component', () => {
     const output = { id: "output", name: "test", image: "test", defaultVolume: 5, pin: 3};
+    const device = { id: "device", name: "test", outputs: [output], settings: { maxVolumePerOutput: 100, defaultVolume: 100, defaultRatio: 2 }};
     const { container } = render(
       <MemoryRouter initialEntries={['/']}>
-        <Plant deviceDefaultVolume={50} device="device" output={output} />
+        <Plant device={device} output={output} />
       </MemoryRouter>
     );
     expect(container.firstChild).toMatchSnapshot();
@@ -23,9 +24,10 @@ describe('<Plant></Plant>', () => {
 
   it('should call socket on message when component is rendered', () => {
     const output = { id: "output", name: "test", image: "test", defaultVolume: 5, pin: 3};
+    const device = { id: "device", name: "test", outputs: [output], settings: { maxVolumePerOutput: 100, defaultVolume: 100, defaultRatio: 2 }};
     render(
       <MemoryRouter initialEntries={['/']}>
-        <Plant deviceDefaultVolume={100} device="device" output={output} />
+        <Plant device={device} output={output} />
       </MemoryRouter>
     );
     expect(socket.on).toHaveBeenCalledWith("message", expect.any(Function));

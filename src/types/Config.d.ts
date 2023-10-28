@@ -7,8 +7,8 @@ type OutputConfig = {
   id: string;
   name?: string;
   image?: string;
-  defaultVolume?: number; // mililiters
-  ratio?: number; // seconds per mililiter
+  defaultVolume?: number; // milliliters
+  ratio?: number; // miilliliters per second
 };
 
 type Output = {
@@ -20,6 +20,7 @@ type Device = {
   outputs: Output;
   id?: string;
   type: string;
+  settings: DeviceSettings;
 };
 
 type Config = {
@@ -40,4 +41,6 @@ type DeviceConfig = {
 type DeviceSettings = {
   defaultVolume: number;
   defaultRatio: number;
+  maxVolumePerOutput: number;
+  calibrateDuration: number;
 };

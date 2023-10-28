@@ -5,15 +5,19 @@ import { Link } from "react-router-dom";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { createPortal } from "react-dom";
 import './output.css'
+import Calibrate from "../components/Calibrate.tsx";
 
 export default function Output({ setTitle, config, setConfig }: { setTitle: (title: string) => void, config: Config | null, setConfig: (config: Config) => void }) {
   const { device, outputId } = useParams();
   const [outputData, setOutputData] = useState<OutputConfig>();
   const [name, setName] = useState<string>('');
   const [image, setImage] = useState<string>('');
-  const [defaultVolume, setDefaultVolume] = useState<number>(50);
+  const [defaultVolume, setDefaultVolume] = useState<number>(0);
+  const [ratio, setRatio] = useState<number>(0);
   const navigate = useNavigate();
   const [backBtnElement, setBackBtnElement] = useState<HTMLElement | null>(null);
+  const [isCalibrating, setIsCalibrating] = useState<boolean>(false);
+  const [calibrateDuration, setCalibrateDuration] = useState<number>(0);
 
   useEffect(() => {
     socket && socket.on("message", (newMessage: ConfigMessage) => {
@@ -31,9 +35,11 @@ export default function Output({ setTitle, config, setConfig }: { setTitle: (tit
       setTitle(outputData?.name ?? `Output ${outputId}`);
       setName(outputData?.name ?? '');
       setImage(outputData?.image ?? '');
-      setDefaultVolume(outputData?.defaultVolume ?? 50);
+      setDefaultVolume(outputData?.defaultVolume ?? config.devices[device ?? 0]?.settings.defaultVolume ?? 0);
+      setRatio(outputData?.ratio ?? config.devices[device ?? 0]?.settings.defaultRatio ?? 0);
+      setCalibrateDuration(config.devices[device ?? 0]?.settings.calibrateDuration ?? 0);
     }
-  }, [config, device, outputData?.defaultVolume, outputData?.image, outputData?.name, outputId, setTitle]);
+  }, [config, device, outputData?.defaultVolume, outputData?.image, outputData?.name, outputData?.ratio, outputId, setTitle]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -46,7 +52,15 @@ export default function Output({ setTitle, config, setConfig }: { setTitle: (tit
   };
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket && socket.emit("message", { action: "editOutput", device, output: outputId, name, image, defaultVolume });
+    socket && socket.emit("message", { action: "editOutput", device, output: outputId, name, image, defaultVolume, ratio });
+  }
+  const handleCalibrate = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setIsCalibrating(true);
+  }
+
+  if (!device || !outputId) {
+    return <div>Missing device or output id</div>
   }
 
   return (
@@ -55,14 +69,25 @@ export default function Output({ setTitle, config, setConfig }: { setTitle: (tit
           <ChevronLeftIcon className="h-5 w-5 text-gray-500 align-baseline inline-block" />
         </Link>, backBtnElement)}
       <div className="plant mb-4 mx-4 p-4 sm:mx-0">
-        <form onSubmit={handleSubmit} className="output-form sm:flex sm:items-center">
+        <form onSubmit={handleSubmit} className="output-form sm:flex sm:items-start">
           <div className="sm:w-2/3">
-            <input className="" type="text" placeholder="Name" value={name} onChange={handleNameChange} />
-            <div className="flex items-center mb-4">
-              <input className="volume" type="number"  value={defaultVolume} onChange={handleDefaultVolumeChange} />
+            <label htmlFor="volume">Name</label>
+            <input type="text" className="mb-2" placeholder="Name" value={name} onChange={handleNameChange} />
+            <label htmlFor="volume">Default watering volume</label>
+            <div id="volume" className="flex items-center mb-2">
+              <input className="volume" type="number" value={defaultVolume} onChange={handleDefaultVolumeChange} />
               <span className="volume-label">ml</span>
             </div>
-            <select onChange={handleImageChange} value={image} >
+            <label htmlFor="ratio">Ratio (milliliters per second)</label>
+            <div className="flex items-center mb-2">
+              <input id="ratio" className="volume" type="number" disabled value={ratio} onChange={() => setRatio(5)} />
+              <button className="calibrateBtn" onClick={handleCalibrate}>Calibrate</button>
+            </div>
+            <div className="mb-2">
+              {isCalibrating && <Calibrate duration={calibrateDuration} setRatio={setRatio} setIsCalibrating={setIsCalibrating} output={outputId} device={device} />}
+            </div>
+            <label htmlFor="image">Image</label>
+            <select id="image" onChange={handleImageChange} value={image} className="mb-4" >
               <option value="">Select image</option>
               {[...Array(7)].map((_, i) => <option key={i} value={`0${i + 1}.jpg`}>Image {i + 1}</option>)}
             </select>
@@ -71,7 +96,7 @@ export default function Output({ setTitle, config, setConfig }: { setTitle: (tit
             </div>
           </div>
           <div className="w-full h-72 sm:w-1/3 sm:ml-4">
-            <img src={`/plants/${image}`} className="image h-72" alt="" />
+            <img src={image ? `/plants/${image}`: `/plant.svg`} className="image bg-slate-200 h-72" alt="" />
           </div>
         </form>
       </div>

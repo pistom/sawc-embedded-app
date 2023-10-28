@@ -4,6 +4,7 @@
     output: string;
     status: string;
     duration: number;
+    message?: string;
   }
 
   type RemainingTimesMessage = Message & {
@@ -12,4 +13,8 @@
 
   type ConfigMessage = Message & {
     config: Config;
+  }
+
+  type CalibrationMessage = Message & {
+    ratio: number;
   }

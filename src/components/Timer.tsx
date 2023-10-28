@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
+import './timer.css';
 
 type TimerProps = {
   duration: number;
   type: string;
   initial?: number;
+  finishCallback?: () => void;
+  disableCounter?: boolean;
 };
 
-export default function Timer({ duration, type, initial = duration }: TimerProps) {
+export default function Timer({ duration, type, initial = duration, finishCallback, disableCounter }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [width, setWidth] = useState('100%');
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
@@ -25,11 +28,12 @@ export default function Timer({ duration, type, initial = duration }: TimerProps
     if (timeLeft <= 0) {
       intervalIdRef.current && clearInterval(intervalIdRef.current);
       setTimeLeft(0);
+      if (finishCallback) finishCallback();
     }
     if (type === 'current') {
       setWidth(`${(timeLeft/initial)* 100}%`);
     }
-  }, [timeLeft, initial, type, duration]);
+  }, [timeLeft, initial, type, duration, finishCallback]);
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
@@ -40,9 +44,12 @@ export default function Timer({ duration, type, initial = duration }: TimerProps
   };
 
   return (
-    <div className="timer">
-      <div className={`label ${type === 'scheduled' ? "text-xs":"text-base"}`}>{type === 'scheduled' && `Start in ` }{formatTime(timeLeft)}</div>
-      <div className={`countdown ${type}`} style={{width}}></div>
+    <div className={`timer  ${type}`}>
+      {!disableCounter && 
+        <div className="label">
+          {type === 'scheduled' && `Start in ` }{formatTime(timeLeft)}
+        </div>}
+      <div className={`countdown`} style={{width}}></div>
     </div>
   );
 }

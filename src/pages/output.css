@@ -2,10 +2,13 @@
   @apply w-full
 }
 .output-form input, .output-form select {
-  @apply font-bold items-center p-2 text-sm font-medium rounded-lg border-solid border border-gray-400 w-full mb-4;
+  @apply font-bold items-center p-2 text-sm font-medium rounded-lg border-solid border border-gray-400 w-full;
+}
+.output-form select {
+  @apply bg-slate-100;
 }
 .plant .output-form .volume {
-  @apply w-5/6 border-r-0 rounded-none rounded-l-lg text-left;
+  @apply w-full border-r-0 rounded-none rounded-l-lg text-left;
 }
 .plant .output-form .volume-label {
   @apply w-1/6 text-right;

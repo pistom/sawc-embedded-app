@@ -11,99 +11,26 @@
   }
 }
 
-.plants {
-  @apply inline-flex flex-wrap w-full;
+.btn {
+  @apply items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-slate-500;
 }
-.plant {
-  @apply flex flex-row bg-white border border-gray-200 rounded-lg shadow ml-4 mr-4 mb-4 items-stretch;
+.btn:hover {
+  @apply bg-slate-900;
 }
-@screen md {
-  .plants > div:nth-child(odd) .plant {
-    @apply mr-2 ml-0;
-  }
-  .plants > div:nth-child(even) .plant {
-    @apply ml-2 mr-0;
-  }
-  .plant {
-    @apply flex-col;
-  }
+.btn.btn-sm {
+  @apply px-2 py-1 text-xs;
 }
-@screen lg {
-  .plants > div:nth-child(3n-2) .plant {
-    @apply ml-0 mr-2;
-  }
-  .plants > div:nth-child(3n-1) .plant {
-    @apply ml-1 mr-1;
-  }
-  .plants > div:nth-child(3n) .plant {
-    @apply ml-2 mr-2;
-  }
+.btn.btn-md {
+  @apply px-2 py-1 text-sm;
 }
-.plant .image {
-  @apply object-cover rounded-t-lg w-32 h-max rounded-none rounded-l-lg;
+.btn.btn-primary {
+  @apply bg-teal-800;
 }
-@screen md {
-  .plant .image {
-    @apply w-full h-80;
-  }
+.btn:disabled {
+  @apply opacity-50 cursor-not-allowed;
 }
-.plant .details {
-  @apply flex flex-col p-4 leading-normal relative w-full;
-}
-.plant .title {
-  @apply mb-2 text-2xl font-bold tracking-tight text-gray-900;
-}
-.plant .volume {
-  @apply font-bold items-center text-right pl-3 py-2 text-sm font-medium rounded-l-lg border-solid border border-gray-400 border-r-0 w-14;
-}
-.plant .volume-label {
-  @apply pr-3 text-sm pl-1 py-2 text-sm font-medium rounded-r-lg border-solid border border-gray-400 border-l-0;
-}
-.plant .volume:focus {
-  @apply outline-none;
-}
-.plant .waterBtn, .plant .saveBtn {
-  @apply items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-teal-800;
-}
-.plant .waterBtn:hover {
-  /* @apply bg-teal-800; */
-}
-.plant .waterBtn:focus {
-  @apply outline-none ring-teal-300;
-}
-.plant .stopBtn {
-  @apply items-center px-3 py-2 text-sm font-medium text-center text-white bg-lime-700 rounded-lg;
-}
-.plant .stopBtn:hover {
-  @apply bg-lime-800;
-}
-.plant .stopBtn:focus {
-  @apply ring-4 outline-none ring-lime-300;
-}
-.plant .scheduled .stopBtn {
-  @apply bg-amber-700;
-}
-.plant .scheduled .stopBtn:hover {
-  @apply bg-amber-800;
-}
-.plant .scheduled .stopBtn:focus {
-  @apply ring-amber-300;
-}
-.plant .watering {
-  @apply text-center absolute p-3 top-0 left-0 right-0 bottom-0 rounded-r-lg bg-lime-600/[.95];
-}
-.plant .watering.scheduled {
-  @apply bg-amber-300/[.95];
-}
-.timer {
-  @apply w-full bg-slate-200 text-right absolute bottom-0 right-0;
-}
-.timer .label {
-  @apply absolute bottom-2 right-2;
-}
-.timer .countdown {
-  @apply w-full h-2 bg-emerald-300 transition-all duration-1000 ease-linear;
-}
-.timer .countdown.scheduled {
-  @apply bg-slate-700;
+
+/* FORMS */
+form label {
+  @apply block mb-1 text-sm font-medium text-gray-700;
 }

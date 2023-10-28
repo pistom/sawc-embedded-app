@@ -14,10 +14,9 @@ export default function Device({ device }: { device: DeviceConfig }) {
       <div className="plants">
         {device.outputs.map((output: OutputConfig) => (
           <Plant
-            device={device.id}
-            key={`plant_${device.id}_${output.id}`}
+            device={device}
             output={output}
-            deviceDefaultVolume={device.settings.defaultVolume}
+            key={`plant_${device.id}_${output.id}`}
           />
         ))}
       </div>

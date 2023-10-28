@@ -61,6 +61,9 @@ const Calibrate = ({ setIsCalibrating, duration, setRatio, output, device }: Cal
   }
   const handleClose = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (isWater) {
+      socket && socket.emit("message", { action: "stopCalibrating", device, output });
+    }
     setIsCalibrating(false);
   }
 
@@ -95,8 +98,8 @@ const Calibrate = ({ setIsCalibrating, duration, setRatio, output, device }: Cal
     {waterIsDone && <>
       <p className="text-sm">How much water is in the cup?</p>
       <div className="relative flex items-center mb-4 pb-4">
-        <input className="volume" type="number" disabled={!waterIsDone} onChange={handleVolumeChange} value={volume} placeholder="Calibration value" />
-        <span className="volume-label">ml</span>
+        <input className="unit" type="number" disabled={!waterIsDone} onChange={handleVolumeChange} value={volume} placeholder="Calibration value" />
+        <span className="unit-label">ml</span>
       </div>
     </>}
     <div className="text-right mt-4">

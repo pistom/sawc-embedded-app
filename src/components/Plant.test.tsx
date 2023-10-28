@@ -13,7 +13,7 @@ import Plant from "./Plant";
 describe('<Plant></Plant>', () => {
   it('should render the component', () => {
     const output = { id: "output", name: "test", image: "test", defaultVolume: 5, pin: 3};
-    const device = { id: "device", name: "test", outputs: [output], settings: { maxVolumePerOutput: 100, defaultVolume: 100, defaultRatio: 2 }};
+    const device = { id: "device", name: "test", outputs: [output], settings: { maxVolumePerOutput: 100, defaultVolume: 100, defaultRatio: 2, calibrateDuration: 2 }};
     const { container } = render(
       <MemoryRouter initialEntries={['/']}>
         <Plant device={device} output={output} />
@@ -24,7 +24,7 @@ describe('<Plant></Plant>', () => {
 
   it('should call socket on message when component is rendered', () => {
     const output = { id: "output", name: "test", image: "test", defaultVolume: 5, pin: 3};
-    const device = { id: "device", name: "test", outputs: [output], settings: { maxVolumePerOutput: 100, defaultVolume: 100, defaultRatio: 2 }};
+    const device = { id: "device", name: "test", outputs: [output], settings: { maxVolumePerOutput: 100, defaultVolume: 100, defaultRatio: 2, calibrateDuration: 2}};
     render(
       <MemoryRouter initialEntries={['/']}>
         <Plant device={device} output={output} />

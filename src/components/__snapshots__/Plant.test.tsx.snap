@@ -39,18 +39,18 @@ exports[`<Plant></Plant> should render the component 1`] = `
         test
       </h5>
       <div
-        class="flex gap-3 mb-3 font-normal text-gray-700"
+        class="form flex gap-3 mb-3 font-normal text-gray-700"
       >
         <div
           class="flex items-center"
         >
           <input
-            class="volume"
+            class="unit"
             type="number"
             value="5"
           />
           <span
-            class="volume-label"
+            class="unit-label"
           >
             ml
           </span>

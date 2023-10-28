@@ -34,3 +34,33 @@
 form label {
   @apply block mb-1 text-sm font-medium text-gray-700;
 }
+.form {
+  @apply w-full
+}
+.form input, .form select {
+  @apply font-bold items-center p-2 text-sm font-medium rounded-lg border-solid border border-gray-400 w-full;
+}
+.form select {
+  @apply bg-slate-100;
+}
+.form .unit {
+  @apply w-full border-r-0 rounded-none rounded-l-lg text-left;
+}
+.form .unit-label {
+  @apply w-1/6 text-right;
+}
+.form .unit {
+  @apply font-bold items-center pl-3 py-2 text-sm font-medium rounded-l-lg border-solid border border-gray-400 border-r-0 w-full;
+}
+.form .unit-label {
+  @apply pr-3 text-sm pl-1 py-2 text-sm font-medium rounded-r-lg border-solid border border-gray-400 border-l-0;
+}
+.form .unit:focus {
+  @apply outline-none;
+}
+.card {
+  @apply flex flex-row bg-white border border-gray-200 rounded-lg shadow ml-4 mr-4 mb-4 items-stretch;
+}
+.form .inputBtn {
+  @apply bg-slate-300 p-2 text-sm rounded-none text-slate-900 rounded-r-lg border border-gray-400;
+}

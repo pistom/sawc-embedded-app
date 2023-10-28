@@ -75,10 +75,12 @@ const Calibrate = ({ setIsCalibrating, duration, setRatio, output, device }: Cal
 
   return <div className="border p-4 rounded-lg border-slate-300 transition">
     <div>{errorMessage}</div>
-    <div className="step-1 relative pb-4">
+    <div className="step-1 relative pb-8">
       <h1 className="text-xl">Calibrate</h1>
       <div className="flex flex-col items-center sm:flex-row w-full items-start">
-        <div className="bg-slate-200 rounded-lg w-full mb-2 h-28 sm:w-40 sm:order-last">image</div>
+        <div className="bg-slate-200 p-4 rounded-lg text-center w-full mb-2 h-28 sm:w-40 sm:order-last">
+          <img src="/cup.svg" className="object-cover h-full inline" alt="" />
+        </div>
         <div className="w-full sm:mr-4">
           <p className="text-sm">
             {`Prepare a measuring cup with milliliter markings. Place it under the tip of the watering hose. Press the "start" button. Water will fill the measuring cup for ${duration} seconds.`}

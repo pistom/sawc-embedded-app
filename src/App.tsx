@@ -8,7 +8,8 @@ import socket from './socket';
 import { getWateringDevicesFromConfig } from './helpers/config';
 import { useFetchConfig } from './hooks/useFetchConfig';
 import { useSocket } from './hooks/useSocket';
-import Output from './pages/Output';
+import EditOutput from './pages/EditOutput';
+import EditDevice from './pages/EditDevice';
 
 export default function App() {
   const [pageTitle, setPageTitle] = useState('SAWC');
@@ -36,7 +37,8 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Devices devices={devices} setTitle={setPageTitle} />} />
               <Route path="/schedule" element={<Schedule setTitle={setPageTitle} />} />
-              <Route path="/output/edit/:device/:outputId" element={<Output setTitle={setPageTitle} config={config} setConfig={setConfig} />} />
+              <Route path="/output/edit/:device" element={<EditDevice setTitle={setPageTitle} config={config} setConfig={setConfig} />} />
+              <Route path="/output/edit/:device/:outputId" element={<EditOutput setTitle={setPageTitle} config={config} setConfig={setConfig} />} />
             </Routes>
           </div>
         </main>

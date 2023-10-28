@@ -1,5 +1,8 @@
 .timer {
-  @apply w-full bg-slate-200 text-right absolute bottom-0 right-0 rounded-lg overflow-hidden;
+  @apply h-10 w-full absolute bottom-0 right-0;
+}
+.timer > div {
+  @apply  h-4 m-2 bg-slate-200 text-right absolute bottom-1 right-1 left-1 rounded-lg overflow-hidden;
 }
 .timer .label {
   @apply absolute text-xs right-2;

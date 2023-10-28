@@ -45,11 +45,13 @@ export default function Timer({ duration, type, initial = duration, finishCallba
 
   return (
     <div className={`timer  ${type}`}>
+      <div>
       {!disableCounter && 
         <div className="label">
           {type === 'scheduled' && `Start in ` }{formatTime(timeLeft)}
         </div>}
       <div className={`countdown`} style={{width}}></div>
+</div>
     </div>
   );
 }

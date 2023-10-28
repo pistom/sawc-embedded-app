@@ -80,10 +80,10 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
             <Cog6ToothIcon className="h-5 w-5 text-slate-300 absolute top-2 right-2" />
           </Link>}
         <h5 className="title">{name ?? `Output ${id}`}</h5>
-        <div className="flex gap-3 mb-3 font-normal text-gray-700">
+        <div className="form flex gap-3 mb-3 font-normal text-gray-700">
           <div className="flex items-center">
-            <input className="volume" type="number" disabled={isWatering || wateringIn > 0} value={wateringVolume} onChange={handleWateringVolume} />
-            <span className="volume-label">ml</span>
+            <input className="unit" type="number" disabled={isWatering || wateringIn > 0} value={wateringVolume} onChange={handleWateringVolume} />
+            <span className="unit-label">ml</span>
           </div>
           <button className={`waterBtn ${!isOn ? `bg-emerald-700` : `bg-slate-700`}`} onClick={() => handleMessageSubmit(id, wateringVolume)}>
             {!isOn ? `Water` : wateringIn > 0 ? `Abort` : `Stop`}

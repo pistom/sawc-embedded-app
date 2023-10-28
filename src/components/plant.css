@@ -37,17 +37,19 @@
 .plant .details {
   @apply flex flex-col p-4 leading-normal relative w-full;
 }
+@screen md {
+  .plant .details {
+    @apply pb-8;
+  }
+}
 .plant .title {
   @apply mb-2 text-2xl font-bold tracking-tight text-gray-900;
 }
-.plant .volume {
-  @apply font-bold items-center text-right pl-3 py-2 text-sm font-medium rounded-l-lg border-solid border border-gray-400 border-r-0 w-full;
+.plant .form .unit {
+  @apply text-right w-14;
 }
-.plant .volume-label {
-  @apply pr-3 text-sm pl-1 py-2 text-sm font-medium rounded-r-lg border-solid border border-gray-400 border-l-0;
-}
-.plant .volume:focus {
-  @apply outline-none;
+.plant .form .unit-label {
+  @apply w-auto;
 }
 .plant .waterBtn, .plant .saveBtn, .plant .calibrateBtn {
   @apply items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-teal-800;
@@ -75,9 +77,6 @@
 }
 .plant .scheduled .stopBtn:focus {
   @apply ring-amber-300;
-}
-.plant .calibrateBtn {
-  @apply bg-slate-300 rounded-none text-slate-900 rounded-r-lg border border-gray-400;
 }
 .plant .watering {
   @apply text-center absolute p-3 top-0 left-0 right-0 bottom-0 rounded-r-lg bg-lime-600/[.95];

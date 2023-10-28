@@ -5,6 +5,7 @@ function Devices({devices, setTitle}: {devices: DeviceConfig[], setTitle: (title
   useEffect(() => {
     setTitle('My plants');
   },[setTitle]);
+
   return (
     <>
       {

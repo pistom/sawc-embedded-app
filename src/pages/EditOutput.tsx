@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import socket from '../socket.ts';
+import socket from '../socket.js';
 import { Link } from "react-router-dom";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { createPortal } from "react-dom";
 import './output.css'
-import Calibrate from "../components/Calibrate.tsx";
+import Calibrate from "../components/Calibrate.js";
 
-export default function Output({ setTitle, config, setConfig }: { setTitle: (title: string) => void, config: Config | null, setConfig: (config: Config) => void }) {
+export default function EditOutput({ setTitle, config, setConfig }: { setTitle: (title: string) => void, config: Config | null, setConfig: (config: Config) => void }) {
   const { device, outputId } = useParams();
   const [outputData, setOutputData] = useState<OutputConfig>();
   const [name, setName] = useState<string>('');
@@ -68,20 +68,20 @@ export default function Output({ setTitle, config, setConfig }: { setTitle: (tit
       {backBtnElement && createPortal(<Link to={'/'} className="backBtn bg-slate-100 rounded-full px-2 mr-2">
           <ChevronLeftIcon className="h-5 w-5 text-gray-500 align-baseline inline-block" />
         </Link>, backBtnElement)}
-      <div className="plant mb-4 mx-4 p-4 sm:mx-0">
-        <form onSubmit={handleSubmit} className="output-form sm:flex sm:items-start">
+      <div className="card mb-4 mx-4 p-4 sm:mx-0">
+        <form onSubmit={handleSubmit} className="form sm:flex sm:items-start">
           <div className="sm:w-2/3">
             <label htmlFor="volume">Name</label>
             <input type="text" className="mb-2" placeholder="Name" value={name} onChange={handleNameChange} />
             <label htmlFor="volume">Default watering volume</label>
             <div id="volume" className="flex items-center mb-2">
-              <input className="volume" type="number" value={defaultVolume} onChange={handleDefaultVolumeChange} />
-              <span className="volume-label">ml</span>
+              <input className="unit" type="number" value={defaultVolume} onChange={handleDefaultVolumeChange} />
+              <span className="unit-label">ml</span>
             </div>
             <label htmlFor="ratio">Ratio (milliliters per second)</label>
             <div className="flex items-center mb-2">
-              <input id="ratio" className="volume" type="number" disabled value={ratio} onChange={() => setRatio(5)} />
-              <button className="calibrateBtn" onClick={handleCalibrate}>Calibrate</button>
+              <input id="ratio" className="unit" type="number" disabled value={ratio} onChange={() => setRatio(5)} />
+              <button className="inputBtn" onClick={handleCalibrate}>Calibrate</button>
             </div>
             <div className="mb-2">
               {isCalibrating && <Calibrate duration={calibrateDuration} setRatio={setRatio} setIsCalibrating={setIsCalibrating} output={outputId} device={device} />}
@@ -92,11 +92,11 @@ export default function Output({ setTitle, config, setConfig }: { setTitle: (tit
               {[...Array(7)].map((_, i) => <option key={i} value={`0${i + 1}.jpg`}>Image {i + 1}</option>)}
             </select>
             <div className="text-right mb-4">
-              <button type="submit" className="saveBtn">Save</button>
+              <button type="submit" className="btn btn-primary">Save</button>
             </div>
           </div>
-          <div className="w-full h-72 sm:w-1/3 sm:ml-4">
-            <img src={image ? `/plants/${image}`: `/plant.svg`} className="image bg-slate-200 h-72" alt="" />
+          <div className="w-full h-72 sm:w-1/3 sm:ml-4 text-center">
+            <img src={image ? `/plants/${image}`: `/plant.svg`} className="image object-cover w-full inline bg-slate-200 h-72" alt="" />
           </div>
         </form>
       </div>

@@ -11,6 +11,10 @@
   }
 }
 
+h2 {
+  @apply font-bold text-2xl;
+}
+
 .btn {
   @apply items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-slate-500;
 }
@@ -38,7 +42,10 @@ form label {
   @apply w-full
 }
 .form input, .form select {
-  @apply font-bold items-center p-2 text-sm font-medium rounded-lg border-solid border border-gray-400 w-full;
+  @apply font-bold items-center p-2 text-sm font-medium rounded-lg border-solid border border-gray-400;
+}
+.form input:disabled, .form select:disabled {
+  @apply bg-gray-100 text-gray-500;
 }
 .form select {
   @apply bg-slate-100;
@@ -59,8 +66,12 @@ form label {
   @apply outline-none;
 }
 .card {
-  @apply flex flex-row bg-white border border-gray-200 rounded-lg shadow ml-4 mr-4 mb-4 items-stretch;
+  @apply bg-white border border-gray-200 rounded-lg shadow ml-4 mr-4 mb-4;
 }
 .form .inputBtn {
   @apply bg-slate-300 p-2 text-sm rounded-none text-slate-900 rounded-r-lg border border-gray-400;
+}
+
+.row.saved {
+  @apply bg-lime-200 duration-200;
 }

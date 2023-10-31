@@ -87,7 +87,7 @@ export default function EditOutput({ setTitle, config, setConfig }: { setTitle: 
         <form onSubmit={handleSubmit} className="form sm:flex sm:items-start">
           <div className="sm:w-2/3">
             <label htmlFor="volume">Name</label>
-            <input type="text" className="mb-2" placeholder="Name" value={name} onChange={handleNameChange} />
+            <input type="text" className="mb-2 w-full" placeholder="Name" value={name} onChange={handleNameChange} />
             <label htmlFor="volume">Default watering volume</label>
             <div id="volume" className="flex items-center mb-2">
               <input className="unit" type="number" value={defaultVolume} onChange={handleDefaultVolumeChange} />
@@ -102,7 +102,7 @@ export default function EditOutput({ setTitle, config, setConfig }: { setTitle: 
               {isCalibrating && <Calibrate duration={calibrateDuration} setRatio={setRatio} setIsCalibrating={setIsCalibrating} output={outputId} device={device} />}
             </div>
             <label htmlFor="image">Image</label>
-            <select id="image" onChange={handleImageChange} value={image} className="mb-4" >
+            <select id="image" onChange={handleImageChange} value={image} className="mb-4 w-full" >
               <option value="">Select image</option>
               {[...Array(7)].map((_, i) => <option key={i} value={`0${i + 1}.jpg`}>Image {i + 1}</option>)}
             </select>

@@ -12,7 +12,8 @@ export const getWateringDevicesFromConfig = (config: Config): DeviceConfig[] => 
               id: output,
             }
           ))
-          .filter((output: { pin: number, id: string }) => output.id !== 'pump'),
+          .filter((output: { pin: number, id: string }) => output.id !== 'pump')
+          .filter((output) => !output.disabled)
       }
     });
   return devices;

@@ -9,6 +9,7 @@ type OutputConfig = {
   image?: string;
   defaultVolume?: number; // milliliters
   ratio?: number; // miilliliters per second
+  disabled?: boolean;
 };
 
 type Output = {
@@ -43,4 +44,5 @@ type DeviceSettings = {
   defaultRatio: number;
   maxVolumePerOutput: number;
   calibrateDuration: number;
+  disabled?: boolean;
 };

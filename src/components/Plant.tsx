@@ -46,6 +46,9 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
           setRemainingWateringTime(newMessage.duration);
           setWateringIn(0);
           break;
+        case "calibratingError":
+          console.dir('calibratingError', newMessage);
+          break;
       }
     }
   }, [deviceId, id]);

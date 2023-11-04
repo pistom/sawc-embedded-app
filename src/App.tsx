@@ -15,9 +15,7 @@ export default function App() {
   const [pageTitle, setPageTitle] = useState('SAWC');
   const [config, setConfig] = useFetchConfig();
   const cnnected = useSocket(socket);
-  const devices = useMemo(() => {
-    return config ? getWateringDevicesFromConfig(config) : [];
-  }, [config]);
+  const devices = useMemo(() => config ? getWateringDevicesFromConfig(config) : [], [config]);
 
   return (
     <BrowserRouter>
@@ -36,7 +34,7 @@ export default function App() {
           <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
             <Routes>
               <Route path="/" element={<Devices devices={devices} setTitle={setPageTitle} />} />
-              <Route path="/schedule" element={<Schedule setTitle={setPageTitle} />} />
+              <Route path="/schedule" element={<Schedule setTitle={setPageTitle} config={config}  />} />
               <Route path="/output/edit/:device" element={<EditDevice setTitle={setPageTitle} config={config} setConfig={setConfig} />} />
               <Route path="/output/edit/:device/:outputId" element={<EditOutput setTitle={setPageTitle} config={config} setConfig={setConfig} />} />
             </Routes>

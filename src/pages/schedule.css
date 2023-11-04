@@ -1,0 +1,52 @@
+.event.card {
+  @apply p-0;
+}
+.event .title {
+  @apply text-xl px-4 py-2;
+}
+.event .title span {
+  @apply text-gray-600 text-sm;
+}
+.event .details {
+  @apply flex border-t border-gray-300;
+}
+.event .details .type {
+  @apply p-2 text-center;
+  @apply border-r border-gray-200 text-xs text-gray-600;
+}
+.event .details .type .icon {
+  @apply inline-block h-8 w-8 text-gray-400;
+}
+.event .details .watering {
+  @apply border-r border-gray-200 flex-auto w-64 flex flex-col;
+}
+.event .details .watering .time {
+  @apply p-2;
+}
+.event .details .watering .time .volume {
+  @apply text-sm font-medium;
+}
+.event .details .watering .days {
+  @apply p-2 border-t border-gray-200 pt-2 mt-2;
+}
+@screen md {
+  .event .details .watering {
+    @apply flex-row;
+  }
+  .event .details .watering .time {
+    @apply flex-none w-48;
+  }
+  .event .details .watering .days {
+    @apply p-2 border-gray-200 border-l border-t-0 mt-0 pt-4 flex-1;
+  }
+}
+.event .details .date {
+  @apply p-2;
+  @apply border-r border-gray-200;
+}
+.event .details .date span {
+  @apply text-gray-600 text-xs;
+}
+.event .details .actions {
+  @apply p-2 pt-6 justify-center text-center;
+}

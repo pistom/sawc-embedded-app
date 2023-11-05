@@ -2,8 +2,15 @@ import { useEffect, useState } from "react";
 import { useFetch } from "use-http";
 import ScheduleEvent from "../components/ScheduleEvent";
 import "./schedule.css";
+import EditScheduleEvent from "../components/EditScheduleEvent";
 
-export default function Schedule({ setTitle, config }: { setTitle: (title: string) => void, config: Config | null }) {
+interface ScheduleProps {
+  setTitle: (title: string) => void,
+  config: Config,
+  devices: DeviceConfig[],
+}
+
+export default function Schedule({ setTitle, config, devices }: ScheduleProps) {
   const [schedule, setSchedule] = useState<ScheduleEvent[]>([]);
   useEffect(() => { initializeSchedule() }, [])
   useEffect(() => {
@@ -11,6 +18,7 @@ export default function Schedule({ setTitle, config }: { setTitle: (title: strin
   }, [setTitle]);
 
   const { get, response, loading, error } = useFetch(`http://${window.location.hostname}:3001`)
+  const [errors, setErrors] = useState<string[]>([]);
 
   const dateTimeToObjects = (schedule: ScheduleEventRaw[]): ScheduleEvent[] => {
     const events = schedule.map((event: ScheduleEventRaw): ScheduleEvent => {
@@ -34,8 +42,30 @@ export default function Schedule({ setTitle, config }: { setTitle: (title: strin
     if (response.ok) setSchedule(initialScheduleEvents.sort((a: ScheduleEvent, b: ScheduleEvent) => a.output.localeCompare(b.output)))
   }
 
-  async function addEvent(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  const validateEvent = (event: ScheduleEvent): void => {
+    const errors = [] as string[];
+    if (!event.device) errors.push('Device is required');
+    if (!event.output) errors.push('Output is required');
+    if (!event.type) errors.push('Type is required');
+    if (event.watering.length === 0) errors.push('You must add at least one watering');
+    if (event.watering.some((watering: Watering) => watering.volume <= 0)) errors.push('Watering volume must be greater than 0');
+    if (event.watering.some((watering: Watering) => watering.time.getHours() === 0 && watering.time.getMinutes() === 0)) errors.push('Watering time is required');
+    if ((event.type === 'period' || event.type === 'always') && event.repeatEvery && event.repeatEvery < 1) errors.push('Repeat every must be greater than 0');
+    if ((event.type === 'period' || event.type === 'always') && event.repeatEvery && event.repeatEvery > 365) errors.push('Repeat every must be less than 365');
+    if ((event.type === 'period' || event.type === 'always') && !event.days && !event.repeatEvery) errors.push('Days or repeat every is required');
+    if ((event.type === 'period' || event.type === 'always') && event.days && event.days.length === 0) errors.push('You must select at least one day');
+    if ((event.type === 'period' || event.type === 'once') && !event.startDate) errors.push('Start date is required');
+    if (event.type === 'period' && !event.endDate) errors.push('End date is required');
+    if (event.type === 'period' && event.startDate && event.endDate && event.startDate > event.endDate) errors.push('Start date must be before end date');
+    if (event.type === 'period' && event.startDate && event.endDate && event.startDate.toLocaleDateString() === event.endDate.toLocaleDateString()) errors.push('Start date and end date must be different');
+    setErrors(() => errors);
+  }
+
+  async function addEvent(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, newEvent: ScheduleEvent) {
     e.preventDefault();
+    validateEvent(newEvent);
+    if(errors.length > 0) return;
+    console.dir(newEvent);
     // const newEvent = { id: 4, device: 'MODULE_01', output: '1', type: 'period', startDate: '2021-01-01', endDate: '2021-01-01', watering: [{ time: '11:15', volume: 100 }, { time: '13:15', volume: 100 }] } as ScheduleEvent;
     // setSchedule([...schedule, newEvent])
     console.dir(schedule)
@@ -43,12 +73,14 @@ export default function Schedule({ setTitle, config }: { setTitle: (title: strin
     // if (response.ok) setSchedule([...schedule, newEvent])
   }
 
+  if (!config) return (<div className="mx-4 sm:mx-0">Loading...</div>);
+
   return (<div className="mx-4 sm:mx-0">
     {loading && 'Loading...'}
     {error && 'Error!'}
-    {config && schedule && schedule.map((event: ScheduleEvent) => (
+    {schedule && schedule.map((event: ScheduleEvent) => (
       <ScheduleEvent key={event.id} event={event} setSchedule={setSchedule} schedule={schedule} config={config} />
     ))}
-    <button onClick={addEvent}>Add</button>
+    <EditScheduleEvent errors={errors} addEvent={addEvent} config={config} devices={devices} />
   </div>)
 }

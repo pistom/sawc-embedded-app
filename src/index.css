@@ -53,8 +53,13 @@ form label {
 .form .unit {
   @apply w-full border-r-0 rounded-none rounded-l-lg text-left;
 }
+.form .unit.unit-sm {
+  @apply w-14 border-r-0 rounded-none rounded-l-lg text-left;
+}
+.form .unit-label.unit-label-sm {
+}
 .form .unit-label {
-  @apply w-1/6 text-right;
+  @apply w-2/6 text-right;
 }
 .form .unit {
   @apply font-bold items-center pl-3 py-2 text-sm font-medium rounded-l-lg border-solid border border-gray-400 border-r-0 w-full;
@@ -66,7 +71,7 @@ form label {
   @apply outline-none;
 }
 .card {
-  @apply bg-white border border-gray-200 rounded-lg shadow p-4 mb-4;
+  @apply border border-gray-200 rounded-lg shadow p-4 mb-4;
 }
 .form .inputBtn {
   @apply bg-slate-300 p-2 text-sm rounded-none text-slate-900 rounded-r-lg border border-gray-400;
@@ -78,11 +83,14 @@ form label {
 
 /* Utilities */
 .badge {
-  @apply inline-block px-2 py-1 text-xs font-medium leading-none text-gray-600 bg-gray-200 rounded-full;
+  @apply border border-gray-300 inline-block px-2 py-1 text-xs font-medium leading-none text-gray-600 bg-gray-200 rounded-full whitespace-nowrap;
+}
+.badge.badge-lg {
+  @apply px-3 py-1 mt-1 text-sm;
 }
 .badge.badge-primary {
-  @apply text-white bg-blue-500;
+  @apply text-white bg-blue-500 border-blue-600;
 }
 .badge.badge-secondary {
-  @apply text-white bg-green-500;
+  @apply text-white bg-green-500 border-green-600;
 }

@@ -8,17 +8,18 @@ type ScheduleEventRaw = {
   startDate: string;
   endDate: string;
   watering: { time: string, volume: number }[];
-  days: WeekDays[];
+  days?: WeekDays[];
 }
 
 type ScheduleEvent = {
   id: number;
   device: string;
   output: string;
-  type: string;
-  days: WeekDays[];
+  type: ScheduleEventType;
+  days?: WeekDays[];
+  repeatEvery?: number;
   startDate: Date;
-  endDate: Date;
+  endDate?: Date;
   watering: Watering[];
 }
 
@@ -26,3 +27,5 @@ type Watering = {
   time: Date;
   volume: number;
 }
+
+type ScheduleEventType = 'always' | 'period' | 'once';

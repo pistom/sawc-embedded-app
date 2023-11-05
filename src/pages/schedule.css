@@ -50,3 +50,14 @@
 .event .details .actions {
   @apply p-2 pt-6 justify-center text-center;
 }
+.edit-schedule-event .field-container {
+  @apply mb-4;
+}
+@screen md {
+  .edit-schedule-event .field-container {
+    @apply flex-none mr-2 pr-2 border-r
+  }
+  .edit-schedule-event .field-container.days {
+    @apply flex-auto
+  }
+}

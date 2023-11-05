@@ -75,3 +75,14 @@ form label {
 .row.saved {
   @apply bg-lime-200 duration-200;
 }
+
+/* Utilities */
+.badge {
+  @apply inline-block px-2 py-1 text-xs font-medium leading-none text-gray-600 bg-gray-200 rounded-full;
+}
+.badge.badge-primary {
+  @apply text-white bg-blue-500;
+}
+.badge.badge-secondary {
+  @apply text-white bg-green-500;
+}

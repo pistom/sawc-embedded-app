@@ -24,28 +24,28 @@
   @apply p-2;
 }
 .event .details .watering .time .volume {
-  @apply text-sm font-medium;
+  @apply font-bold;
 }
-.event .details .watering .days {
-  @apply p-2 border-t border-gray-200 pt-2 mt-2;
+.event .details .watering .date {
+  @apply p-2 border-t border-gray-200 pt-2 pb-4;
+}
+.event .details .watering .date span {
+  @apply text-xs text-gray-500;
 }
 @screen md {
   .event .details .watering {
-    @apply flex-row;
+    @apply flex-row border-r-0;
   }
   .event .details .watering .time {
     @apply flex-none w-48;
   }
-  .event .details .watering .days {
-    @apply p-2 border-gray-200 border-l border-t-0 mt-0 pt-4 flex-1;
+  .event .details .watering .date {
+    @apply p-2 border-gray-200 border-t-0 mt-0 flex-1;
   }
 }
-.event .details .date {
+.event .details .days {
   @apply p-2;
   @apply border-r border-gray-200;
-}
-.event .details .date span {
-  @apply text-gray-600 text-xs;
 }
 .event .details .actions {
   @apply p-2 pt-6 justify-center text-center;

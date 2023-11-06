@@ -10,6 +10,10 @@
     -moz-appearance: textfield !important;
   }
 }
+body {
+  @apply text-slate-600;
+
+}
 
 h2 {
   @apply font-bold text-2xl;
@@ -93,4 +97,14 @@ form label {
 }
 .badge.badge-secondary {
   @apply text-white bg-green-500 border-green-600;
+}
+.badge.badge-ternary {
+  @apply text-white bg-teal-500 border-teal-600;
+}
+
+/* Modal */
+.modal {
+  @apply fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-2;
+  @apply bg-gray-900 bg-opacity-75;
+  @apply transition-opacity duration-200;
 }

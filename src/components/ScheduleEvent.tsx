@@ -5,22 +5,30 @@ interface ScheduleEventProps {
   setSchedule: (schedule: ScheduleEvent[]) => void,
   schedule: ScheduleEvent[],
   config: Config,
+  setIsAdding: (isAdding: boolean) => void,
+  setEditedEvent: (event: ScheduleEvent) => void,
+  deleteEvent: (event: ScheduleEvent) => void,
 }
 
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as WeekDays[];
 const daysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-export default function ScheduleEvent({ event, config }: ScheduleEventProps) {
+export default function ScheduleEvent({ event, config, setIsAdding, setEditedEvent, deleteEvent }: ScheduleEventProps) {
 
   const deviceName = config.devices[event.device].name || event.device;
   const outputName = config.devices[event.device].outputs[event.output].name || event.output;
 
-  async function deleteEvent() {
-    console.dir(event);
-  }
-
   const eventHasAllDays = (days: string[]) => {
     return new Set([...days]).size === 7;
+  }
+
+  const handleEditClick = () => {
+    setIsAdding(true);
+    setEditedEvent(event);
+  }
+
+  const handleDeleteClick = () => {
+    deleteEvent(event);
   }
 
   return (<>
@@ -55,7 +63,7 @@ export default function ScheduleEvent({ event, config }: ScheduleEventProps) {
           <div className="days flex-none w-16 md:text-right sm:w-32 md:w-64 lg:w-72">
               <p className="text-xs text-gray-500">weekdays</p>
               {eventHasAllDays(event.days) ? 
-                <span className="badge badge-primary mb-1">All</span> :
+                <span className="badge badge-primary mb-1">All days</span> :
                event.days.map((day: WeekDays) =>
                 <span className="badge badge-primary mr-1 mb-1" key={day}>{daysShort[days.indexOf(day)]}</span>
               )}
@@ -67,9 +75,13 @@ export default function ScheduleEvent({ event, config }: ScheduleEventProps) {
               <span className="badge badge-secondary mb-1">Every {event.repeatEvery} days</span>
           </div>
         }
+        {event.type === 'once' && <div className="days flex-none w-16 md:text-right sm:w-32 md:w-64 lg:w-72">
+          <p className="text-xs text-gray-500">repeat</p>
+          <span className="badge badge-ternary mb-1">Once</span>
+        </div>}
         <div className="actions w-16 text-right">
-          <button className="sm:mx-1" onClick={deleteEvent}><PencilSquareIcon className="h-5 w-5 text-gray-400 hover:text-blue-500" /></button>
-          <button onClick={deleteEvent}><TrashIcon className="h-5 w-5 text-gray-400 hover:text-red-500" /></button>
+          <button className="sm:mx-1" onClick={handleEditClick}><PencilSquareIcon className="h-5 w-5 text-gray-400 hover:text-blue-500" /></button>
+          <button onClick={handleDeleteClick}><TrashIcon className="h-5 w-5 text-gray-400 hover:text-red-500" /></button>
         </div>
       </div>
     </div>

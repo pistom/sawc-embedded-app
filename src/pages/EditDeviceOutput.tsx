@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import socket from '../socket.js';
-import Toggle from '../components/form/toggle.js';
+import Toggle from '../components/form/Toggle.js';
 
 interface EditDeviceOutputProps {
   outputId: string;

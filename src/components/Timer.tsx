@@ -18,11 +18,11 @@ export default function Timer({ duration, type, initial = duration, finishCallba
     intervalIdRef.current = setInterval(() => {
       setTimeLeft(prevTimeLeft => prevTimeLeft - 1);
     }, 1000);
-
+    setTimeLeft(duration);
     return () => {
       intervalIdRef.current && clearInterval(intervalIdRef.current);
     };
-  }, [duration, initial]);
+  }, [type, duration, initial]);
 
   useEffect(() => {
     if (timeLeft <= 0) {

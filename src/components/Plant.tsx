@@ -24,7 +24,10 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
         setRemainingWateringTime(newMessage.remainingTimes[id].wateringTime + newMessage.remainingTimes[id].wateringIn);
         setInitialWateringTime(newMessage.remainingTimes[id].wateringTime);
       } else {
-        setWateringIn(newMessage.remainingTimes[id].wateringIn);
+        if (id === "6") {
+          console.dir(newMessage.remainingTimes[id]);
+        }
+        setWateringIn(() => newMessage.remainingTimes[id].wateringIn);
         setWateringVolume(newMessage.remainingTimes[id].wateringVolume);
         setInitialWateringTime((initialWateringTime) => initialWateringTime === 0 ? newMessage.remainingTimes[id].wateringTime : initialWateringTime);
       }

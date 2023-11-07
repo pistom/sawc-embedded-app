@@ -12,7 +12,6 @@
 }
 body {
   @apply text-slate-600;
-
 }
 
 h2 {
@@ -75,7 +74,7 @@ form label {
   @apply outline-none;
 }
 .card {
-  @apply border border-gray-200 rounded-lg shadow p-4 mb-4;
+  @apply border bg-white border-gray-200 rounded-lg shadow p-4 mb-4;
 }
 .form .inputBtn {
   @apply bg-slate-300 p-2 text-sm rounded-none text-slate-900 rounded-r-lg border border-gray-400;

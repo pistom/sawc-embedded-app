@@ -13,7 +13,7 @@ function classNames(...classes: string[]): string {
 export function Navigation() {
   return (
     <Disclosure as="nav" className="bg-gray-800">
-      {({ open }) => (
+      {({ open, close }) => (
         <>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 items-center justify-between">
@@ -80,11 +80,12 @@ export function Navigation() {
             </div>
           </div>
 
-          <Disclosure.Panel className="md:hidden">
+          <Disclosure.Panel className="md:hidden fixed bg-gray-800 w-full shadow-2xl">
             <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
               {navigation.map((item) => (
                 <NavLink
                   key={item.name}
+                  onClick={() => {close()}}
                   to={item.href}
                   className={({ isActive }) => {
                     return classNames(

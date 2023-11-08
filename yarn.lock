@@ -790,6 +790,11 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@rehooks/local-storage@^2.4.5":
+  version "2.4.5"
+  resolved "https://registry.yarnpkg.com/@rehooks/local-storage/-/local-storage-2.4.5.tgz#92c773ce623e168274557499679582cd32749f77"
+  integrity sha512-3Q4KtiUBaKoIDRK72BWfAy50ul6hbw29f/M7tyCzlMe2FbSsiQNok0WGeBLaYj4T2PJ7JMSJlSbUGY8RNsImmw==
+
 "@remix-run/router@1.10.0":
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.10.0.tgz#e2170dc2049b06e65bbe883adad0e8ddf8291278"

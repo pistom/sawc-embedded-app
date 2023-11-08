@@ -18,7 +18,7 @@ export default function Schedule({ setTitle, config, devices }: ScheduleProps) {
     setTitle('Schedule');
   }, [setTitle]);
 
-  const { get, post, del, put, response, loading, error } = useFetch(`http://${window.location.hostname}:3001`)
+  const { get, post, del, put, response, loading, error } = useFetch()
   const [errors, setErrors] = useState<string[]>([]);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [editedEvent, setEditedEvent] = useState<ScheduleEvent | null>(null);

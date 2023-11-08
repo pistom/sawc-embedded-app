@@ -3,7 +3,13 @@ import { Socket } from "socket.io-client";
 
 export function useSocket(socket: Socket) {
   const [connected, setConnected] = useState(socket.connected);
+  const [error, setError] = useState<Error | null>(null);
   useEffect(() => {
+    socket.on('welcome_message', (data) => {
+      if (data.status === 'error') {
+        setError(new Error(data.message));
+      }
+    });
     socket.on('connect', () => setConnected(true));
     socket.on('disconnect', () => setConnected(false));
     return () => {
@@ -12,5 +18,5 @@ export function useSocket(socket: Socket) {
     };
   }, [socket, socket.connected]);
 
-  return connected;
+  return [connected, error];
 }

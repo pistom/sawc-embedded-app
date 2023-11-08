@@ -26,6 +26,10 @@ type Device = {
 
 type Config = {
   error?: string;
+  preferences: {
+    token: string;
+    theme: string;
+  }
   devices: {
     [key: string]: Device;
   };

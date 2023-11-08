@@ -1,5 +1,5 @@
 import { Disclosure } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, Cog8ToothIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Link, NavLink } from 'react-router-dom'
 
 const navigation = [
@@ -17,7 +17,7 @@ export function Navigation() {
         <>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 items-center justify-between">
-              <div className="flex items-center">
+              <div className="flex flex-1 items-center">
                 <div className="flex-shrink-0">
                   <Link to="/">
                     <img
@@ -53,16 +53,13 @@ export function Navigation() {
                   </div>
                 </div>
               </div>
-              <div className="hidden md:block">
+              <div className="">
                 <div className="ml-4 flex items-center md:ml-6">
-                  <button
-                    type="button"
-                    className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                  >
-                    <span className="absolute -inset-1.5" />
-                    <span className="sr-only">View notifications</span>
-                    <BellIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
+                  <div className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <NavLink to="/preferences">
+                      <Cog8ToothIcon className="h-6 w-6" aria-hidden="true" />
+                    </NavLink>
+                  </div>
                 </div>
               </div>
               <div className="-mr-2 flex md:hidden">

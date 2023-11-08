@@ -54,7 +54,7 @@ export default function ScheduleEvent({ event, config, setIsAdding, setEditedEve
           </div>
           {event.startDate &&
             <div className="date lg:flex">
-              {event.startDate && <div><p className="text-xs text-gray-500">{event.endDate ? 'from' : 'date'}</p><p className="mr-4">{event.startDate.toLocaleDateString()}</p></div>}
+              {event.startDate && <div><p className="text-xs text-gray-500">{event.type === 'once' ? 'date' : 'from'}</p><p className="mr-4">{event.startDate.toLocaleDateString()}</p></div>}
               {event.endDate && <div><p className="text-xs text-gray-500">to</p><p>{event.endDate.toLocaleDateString()}</p></div>}
             </div>
           }

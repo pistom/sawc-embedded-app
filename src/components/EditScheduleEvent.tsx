@@ -27,7 +27,7 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
     startDate: new Date(),
     endDate: inOneMonth,
     type: 'always',
-    watering: [{time: new Date(), volume: 0}],
+    watering: [{ time: new Date(), volume: 0 }],
     days: [],
   } as ScheduleEvent);
 
@@ -57,7 +57,7 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
   const handleAddNewWatering = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     const newEvent = { ...event };
-    newEvent.watering = [{time: new Date(), volume: 0}, ...newEvent.watering];
+    newEvent.watering = [{ time: new Date(), volume: 0 }, ...newEvent.watering];
     setEvent(newEvent);
   }
 
@@ -184,15 +184,17 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
             })}
           </div>
         </div>
-        {event.type === 'period' && <div className="field-container flex gap-1 lg:block items-start">
+        {(event.type === 'period' || event.type === 'always') && <div className="field-container flex gap-1 lg:block items-start">
           <div className="flex-1">
             <label htmlFor="startDate">Start date</label>
             <input type="date" name="startDate" id="startDate" className="form-input w-full" value={event.startDate.toISOString().split('T')[0]} onChange={handleStartDateChange} />
           </div>
-          <div className="flex-1">
-            <label htmlFor="endDate">End date</label>
-            <input type="date" name="endDate" id="endDate" className="form-input w-full" value={event.endDate?.toISOString().split('T')[0] || (new Date).toISOString().split('T')[0]} onChange={handleEndDateChange} />
-          </div>
+          {event.type === 'period' &&
+            <div className="flex-1">
+              <label htmlFor="endDate">End date</label>
+              <input type="date" name="endDate" id="endDate" className="form-input w-full" value={event.endDate?.toISOString().split('T')[0] || (new Date).toISOString().split('T')[0]} onChange={handleEndDateChange} />
+            </div>
+          }
         </div>}
         {event.type === 'once' && <div className="field-container">
           <label htmlFor="startDate">Date</label>

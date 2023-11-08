@@ -29,7 +29,8 @@ describe("useSocket", () => {
 
   test("socket is connected", (done) => {
     const { result } = renderHook(() => useSocket(clientSocket));
-    expect(result.current).toBe(true);
+    expect(result.current[0]).toBe(true);
+    expect(result.current[1]).toBe(null);
     done();
   });
 

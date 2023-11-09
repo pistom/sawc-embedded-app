@@ -2,6 +2,8 @@ import { writeStorage } from "@rehooks/local-storage";
 import { useEffect, useState } from "react";
 import { useFetch } from "use-http";
 import socket from "../socket";
+import { createPortal } from "react-dom";
+import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
 
 interface PreferencesProps {
   setTitle: (title: string) => void;
@@ -16,17 +18,17 @@ interface ServiceHealth {
 export default function Preferences({ config, setTitle }: PreferencesProps) {
   const [token, setToken] = useState<string>('');
   const { post, response } = useFetch()
-  const [worker, setWorker] = useState<ServiceHealth>({status: 'waiting...', memory: 0});
+  const [worker, setWorker] = useState<ServiceHealth>({ status: 'waiting...', memory: 0 });
 
   useEffect(() => {
     socket && socket.on("message", (message) => {
-      if(message.action === 'heartbeat') {
+      if (message.action === 'heartbeat') {
         if (message.process === 'worker') {
-            const newWorker = {...worker};
-            newWorker.status = 'online';
-            newWorker.memory = message.memory;
-            newWorker.lastHeartbeat = new Date();
-            setWorker(newWorker);
+          const newWorker = { ...worker };
+          newWorker.status = 'online';
+          newWorker.memory = message.memory;
+          newWorker.lastHeartbeat = new Date();
+          setWorker(newWorker);
         }
       }
     });
@@ -34,8 +36,8 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if(worker) {
-        const newWorker = {...worker};
+      if (worker) {
+        const newWorker = { ...worker };
         newWorker.status = 'offline';
         setWorker(newWorker);
       }
@@ -59,11 +61,11 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
 
   const handleSetNewToken = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-      const data = await post('/token', {token});
-      if (response.ok) {
-        writeStorage('token', data.token);
-        alert('Password changed');
-      }
+    const data = await post('/token', { token });
+    if (response.ok) {
+      writeStorage('token', data.token);
+      alert('Password changed');
+    }
   }
 
   const handleLogout = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -72,9 +74,9 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
     window.location.href = '/preferences';
   }
 
-  return (
+  return (<div className="px-4 sm:px-0">
     <form className="form">
-      {config && <div className="text-right"><button className="btn btn-ternary" onClick={handleLogout}>Logout</button></div>}
+      {config && <>{createPortal(<div className="text-right"><button className="btn btn-rounded" onClick={handleLogout}><ArrowLeftOnRectangleIcon className="h-5 w-5" /></button></div>, document.getElementById('afterTitle') as HTMLElement)}</>}
       {!config ?
         <label htmlFor="token">Password</label> :
         <label htmlFor="token">Set new password</label>
@@ -82,17 +84,17 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
       <input type="password" name="token" value={token} onChange={handleChangeToken} />
       {!config ?
         <button className="btn btn-primary ml-2" onClick={handleSaveToken}>Connect</button> : <>
-        <button className="btn btn-primary ml-2" onClick={handleSetNewToken}>Change password</button>
+          <button className="btn btn-primary ml-2" onClick={handleSetNewToken}>Set</button>
         </>
       }
-      {config && worker && <div className="mt-4">
-        <h1 className="text-2xl mt-8 pt-4 border-t">Services status</h1>
-        <h2>Worker</h2>
-        <p>Status: <span className={`font-bold text-${worker.status === 'online' ? 'green' : worker.status === 'offline' ? 'red' : 'slate'}-500`}>{worker.status}</span></p>
-        <p>Memory: {worker.memory}</p>
-        <p>Last heartbeat: {worker.lastHeartbeat ? worker.lastHeartbeat.toLocaleString() : 'waiting...'}</p>
-      </div>}
 
     </form>
-  );
+    {config && worker && <div className="mt-4">
+      <h1 className="text-2xl mt-8 pt-4 border-t">Services status</h1>
+      <h2>Worker</h2>
+      <p>Status: <span className={`font-bold text-${worker.status === 'online' ? 'green' : worker.status === 'offline' ? 'red' : 'slate'}-500`}>{worker.status}</span></p>
+      <p>Memory: {worker.memory}</p>
+      <p>Last heartbeat: {worker.lastHeartbeat ? worker.lastHeartbeat.toLocaleString() : 'waiting...'}</p>
+    </div>}
+  </div>);
 }

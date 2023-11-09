@@ -4,6 +4,9 @@ import ScheduleEvent from "../components/ScheduleEvent";
 import "./schedule.css";
 import EditScheduleEvent from "../components/EditScheduleEvent";
 import { validateScheduleEvent } from "../helpers/validateScheduleEvents";
+import socket from "../socket";
+import { createPortal } from "react-dom";
+import { CheckCircleIcon, ExclamationTriangleIcon, EyeIcon } from "@heroicons/react/24/outline";
 
 interface ScheduleProps {
   setTitle: (title: string) => void,
@@ -13,15 +16,34 @@ interface ScheduleProps {
 
 export default function Schedule({ setTitle, config, devices }: ScheduleProps) {
   const [schedule, setSchedule] = useState<ScheduleEvent[]>([]);
-  useEffect(() => { initializeSchedule() }, [])
-  useEffect(() => {
-    setTitle('Schedule');
-  }, [setTitle]);
-
+  const [isInitialized, setIsInitialized] = useState<Date | boolean | null>(null);
   const { get, post, del, put, response, loading, error } = useFetch()
   const [errors, setErrors] = useState<string[]>([]);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [editedEvent, setEditedEvent] = useState<ScheduleEvent | null>(null);
+
+  useEffect(() => { initializeSchedule() }, [])
+
+  useEffect(() => {
+    setTitle('Schedule');
+  }, [setTitle]);
+
+  useEffect(() => {
+    socket && socket.on("message", (message) => {
+      if(message.action === 'heartbeat' && message.process === 'worker') {
+        setIsInitialized(new Date());
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if(isInitialized || isInitialized === null) {
+        setIsInitialized(false);
+      }
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [isInitialized]);
 
   const dateTimeToObjectsAll = (schedule: ScheduleEventRaw[]): ScheduleEvent[] => {
     const events = schedule.map((event: ScheduleEventRaw): ScheduleEvent => {
@@ -98,8 +120,17 @@ export default function Schedule({ setTitle, config, devices }: ScheduleProps) {
   }
 
   if (!config) return (<div className="mx-4 sm:mx-0">Loading...</div>);
-
   return (<div className="mx-4 sm:mx-0">
+    {isInitialized === null && <>
+      {createPortal(<span className="inline"><EyeIcon className="h-7 w-7 text-blue-500 ml-2 inline" /><span className="text-sm align-middle ml-1 whitespace-nowrap">Waiting for schedule status</span></span> , document.getElementById('afterTitle') as HTMLElement)}
+    </>}
+    {isInitialized === false && <>
+      {createPortal(<span className="inline"><ExclamationTriangleIcon className="h-7 w-7 text-red-500 ml-2 inline" /><span className="text-sm align-middle ml-1 whitespace-nowrap">The schedule is not running.</span></span> , document.getElementById('afterTitle') as HTMLElement)}
+    </> }
+    {isInitialized && <>
+      {createPortal(<span className="inline"><CheckCircleIcon className="h-7 w-7 text-green-500 ml-2 inline" /><span className="text-sm align-middle ml-1 whitespace-nowrap">The schedule is running.</span></span> , document.getElementById('afterTitle') as HTMLElement)}
+    </> }
+    
     {loading && 'Loading...'}
     {error && 'Error!'}
     {schedule && schedule.map((event: ScheduleEvent) => (

@@ -17,7 +17,7 @@ interface ScheduleProps {
 export default function Schedule({ setTitle, config, devices }: ScheduleProps) {
   const [schedule, setSchedule] = useState<ScheduleEvent[]>([]);
   const [isInitialized, setIsInitialized] = useState<Date | boolean | null>(null);
-  const { get, post, del, put, response, loading, error } = useFetch()
+  const { get, post, del, put, response, loading, error, cache } = useFetch()
   const [errors, setErrors] = useState<string[]>([]);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [editedEvent, setEditedEvent] = useState<ScheduleEvent | null>(null);
@@ -66,6 +66,7 @@ export default function Schedule({ setTitle, config, devices }: ScheduleProps) {
   }
 
   async function initializeSchedule() {
+    cache.clear();
     const initialSchedule = await get('/schedule');
     let initialScheduleEvents = [] as ScheduleEvent[];
     initialSchedule && initialSchedule.events && (initialScheduleEvents = dateTimeToObjectsAll(initialSchedule.events));
@@ -78,6 +79,9 @@ export default function Schedule({ setTitle, config, devices }: ScheduleProps) {
 
   async function addEvent(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, newEvent: ScheduleEvent) {
     e.preventDefault();
+    if (newEvent.watering.length > 1 && newEvent.watering[0].volume === 0) {
+      newEvent.watering.shift();
+    }
     const errors = validateEvent(newEvent);
     setErrors(errors);
     if (errors.length > 0) return;

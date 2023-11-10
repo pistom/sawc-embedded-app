@@ -15,6 +15,14 @@ interface EditScheduleEventProps {
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as WeekDays[];
 const daysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+const getNextNearestFullHour = (): Date => {
+  const now = new Date();
+  const nextHour = new Date(now.getTime() + 60 * 60 * 1000);
+  nextHour.setMinutes(0);
+  nextHour.setSeconds(0);
+  return nextHour;
+}
+
 export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEvent, devices, errors, setErrors, setIsAdding }: EditScheduleEventProps) {
 
   const inOneMonth = new Date();
@@ -27,7 +35,7 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
     startDate: new Date(),
     endDate: inOneMonth,
     type: 'always',
-    watering: [{ time: new Date(), volume: 0 }],
+    watering: [{ time: getNextNearestFullHour(), volume: 0 }],
     days: [],
   } as ScheduleEvent);
 
@@ -56,6 +64,7 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
 
   const handleAddNewWatering = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
+    if (!event.watering[0].volume) return setErrors(['Watering volume is required'])
     const newEvent = { ...event };
     newEvent.watering = [{ time: new Date(), volume: 0 }, ...newEvent.watering];
     setEvent(newEvent);
@@ -72,6 +81,12 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
     const newEvent = { ...event };
     newEvent.watering[0].time = new Date(0, 0, 0, Number(hours), Number(minutes));
     setEvent(newEvent);
+  }
+
+  const getTimeFromDateInHHmmFormat = (date: Date = new Date()) => {
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   }
 
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -129,11 +144,11 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
 
   return (<div className="modal">
     <div className="card max-h-full overflow-auto bg-blue-50 edit-schedule-event relative">
-      {errors.length > 0 && <div className="errors absolute top-4 lg:top-8 left-4 lg:left-8 right-4 lg:right-8 bg-red-100 text-red-500 text-xs p-2 z-10 shadow-lg
-    ">
+      {errors.length > 0 && <div className="modal"><div className="errors relative rounded-lg bg-red-100 text-red-500 text-sm p-4 pr-10 shadow-lg ">
         <span className="close" onClick={() => setErrors([])}><XMarkIcon className="h-5 w-5 absolute top-2 right-2 cursor-pointer" /></span>
-        {errors.map((error: string, index: number) => <p key={index}>{error}</p>)}
-      </div>}
+        <ul className="list-disc ml-4">
+        {errors.map((error: string, index: number) => <li key={index}>{error}</li>)}
+      </ul></div></div>}
       <form className="form flex flex-col lg:flex-row">
         <div className="field-container">
           <label htmlFor="type">Schedule type</label>
@@ -164,7 +179,7 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
           <div className="watering gap-2">
             <div className="flex gap-2">
               <div className="time">
-                <input type="time" name="time" id="time" className="form-input w-16" value={event.watering[0]?.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} onChange={handleNewWateringTimeChange} />
+                <input type="time" name="time" step={60} id="time" className="form-input" value={getTimeFromDateInHHmmFormat(event.watering[0]?.time)} onChange={handleNewWateringTimeChange} />
               </div>
               <div className="volume flex">
                 <input type="number" name="volume" id="volume" value={event.watering[0]?.volume} onChange={handleNewWateringVolumeChange} className="form-input unit unit-sm" />

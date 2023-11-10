@@ -76,10 +76,14 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
 
   return (<div className="px-4 sm:px-0">
     <form className="form">
-      {config && <>{createPortal(<div className="text-right"><button className="btn btn-rounded" onClick={handleLogout}><ArrowLeftOnRectangleIcon className="h-5 w-5" /></button></div>, document.getElementById('afterTitle') as HTMLElement)}</>}
+      {config && config.preferences.token && <>{createPortal(
+        <div className="text-right">
+          <button className="btn btn-rounded" onClick={handleLogout}><ArrowLeftOnRectangleIcon className="h-5 w-5" /></button>
+        </div>, document.getElementById('afterTitle') as HTMLElement)}
+      </>}
       {!config ?
         <label htmlFor="token">Password</label> :
-        <label htmlFor="token">Set new password</label>
+        <label htmlFor="token">New password</label>
       }
       <input type="password" name="token" value={token} onChange={handleChangeToken} />
       {!config ?

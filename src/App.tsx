@@ -47,7 +47,7 @@ export default function App() {
           </header>
           <main>
             {!config && !configError && <div className="error">Loading config...</div>}
-            {!cnnected && !error && <div className="error">Connecting web socket</div>}
+            {!cnnected && !error && <div className="modal"><div className="error relative rounded-lg bg-blue-100 text-blue-500 text-sm p-4 pr-10 shadow-lg">Connecting web socket...</div></div>}
             <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
               <Routes>
                 <Route path="/" element={<Devices devices={devices} setTitle={setPageTitle} />} />

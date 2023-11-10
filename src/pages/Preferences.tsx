@@ -17,8 +17,9 @@ interface ServiceHealth {
 
 export default function Preferences({ config, setTitle }: PreferencesProps) {
   const [token, setToken] = useState<string>('');
-  const { post, response } = useFetch()
+  const { post, get, response } = useFetch()
   const [worker, setWorker] = useState<ServiceHealth>({ status: 'waiting...', memory: 0 });
+  const [wateringLogs, setWateringLogs] = useState<string>('');
 
   useEffect(() => {
     socket && socket.on("message", (message) => {
@@ -48,6 +49,12 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
   useEffect(() => {
     setTitle('Preferences');
   }, [setTitle]);
+
+  useEffect(() => {
+    get('/logs/watering').then((logs) => {
+      setWateringLogs(logs);
+    });
+  }, [get])
 
   const handleChangeToken = (event: React.ChangeEvent<HTMLInputElement>) => {
     setToken(() => event.target.value);
@@ -99,6 +106,12 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
       <p>Status: <span className={`font-bold text-${worker.status === 'online' ? 'green' : worker.status === 'offline' ? 'red' : 'slate'}-500`}>{worker.status}</span></p>
       <p>Memory: {worker.memory}</p>
       <p>Last heartbeat: {worker.lastHeartbeat ? worker.lastHeartbeat.toLocaleString() : 'waiting...'}</p>
+    </div>}
+
+    {config && <div className="mt-4">
+      <h1 className="text-2xl mt-8 pt-4 border-t">Logs</h1> 
+      <h2>Watering</h2>
+      <pre className="text-xs bg-gray-100 shadow-inner overflow-auto h-[50vh] border p-2 rounded">{wateringLogs}</pre>
     </div>}
   </div>);
 }

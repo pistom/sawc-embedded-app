@@ -37,6 +37,7 @@ export default function EditOutput({ setTitle, config, setConfig }: { setTitle: 
       setName(outputData?.name ?? '');
       setImage(outputData?.image ?? '');
       setDefaultVolume(outputData?.defaultVolume ?? config.devices[device ?? 0]?.settings.defaultVolume ?? 0);
+      setDefaultVolumeRaw(outputData?.defaultVolume ? outputData.defaultVolume.toString() : config.devices[device ?? 0]?.settings.defaultVolume.toString());
       setRatio(outputData?.ratio ?? config.devices[device ?? 0]?.settings.defaultRatio ?? 0);
       setCalibrateDuration(config.devices[device ?? 0]?.settings.calibrateDuration ?? 0);
     }

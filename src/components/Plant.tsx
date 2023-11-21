@@ -12,7 +12,7 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
   const [isOn, setIsOn] = useState<boolean>(false);
   const [isWatering, setIsWatering] = useState<boolean>(false);
   const [wateringVolume, setWateringVolume] = useState<number>(defaultVolume || deviceSettings.defaultVolume);
-  const [wateringVolumeRaw, setWateringVolumeRaw] = useState<number | string>(deviceSettings.defaultVolume);
+  const [wateringVolumeRaw, setWateringVolumeRaw] = useState<number | string>(defaultVolume || deviceSettings.defaultVolume);
   const [initialWateringTime, setInitialWateringTime] = useState<number>(0);
   const [remainingWateringTime, setRemainingWateringTime] = useState<number>(0);
   const [wateringIn, setWateringIn] = useState<number>(0);

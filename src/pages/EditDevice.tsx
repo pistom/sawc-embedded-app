@@ -6,16 +6,22 @@ import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { createPortal } from "react-dom";
 import EditDeviceOutput from "./EditDeviceOutput.js";
 
-export default function EditDevice({ setTitle, config, setConfig }: { setTitle: (title: string) => void, config: Config | null, setConfig: (config: Config) => void }) {
+interface EditDeviceProps {
+  config: Config | null,
+  setConfig: (config: Config) => void,
+}
+
+export default function EditDevice({ config, setConfig }: EditDeviceProps) {
   const { device } = useParams();
   const navigate = useNavigate();
   const [backBtnElement, setBackBtnElement] = useState<HTMLElement | null>(null);
   const [deviceName, setDeviceName] = useState<string>('');
-  const [defaultVolume, setDefaultVolume] = useState<number>(0);
-  const [defaultRatio, setDefaultRatio] = useState<number>(0);
-  const [maxVolumePerOutput, setMaxVolumePerOutput] = useState<number>(0);
-  const [calibrateDuration, setCalibrateDuration] = useState<number>(0);
+  const [defaultVolume, setDefaultVolume] = useState<number|string>(0);
+  const [defaultRatio, setDefaultRatio] = useState<number|string>(0);
+  const [maxVolumePerOutput, setMaxVolumePerOutput] = useState<number|string>(0);
+  const [calibrateDuration, setCalibrateDuration] = useState<number|string>(0);
   const [outputs, setOutputs] = useState<Output | null>(null);
+  const [errors, setErrors] = useState<string[]>([]);
 
   useEffect(() => {
     socket && socket.on("message", (newMessage: ConfigMessage) => {
@@ -36,26 +42,50 @@ export default function EditDevice({ setTitle, config, setConfig }: { setTitle: 
       setCalibrateDuration(config.devices[device ?? 0]?.settings.calibrateDuration ?? 0);
       setOutputs(config.devices[device ?? 0]?.outputs ?? null);
     }
-  }, [config, device, setTitle]);
+  }, [config, device]);
 
   const handleDeviceNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDeviceName(e.target.value);
   };
 
   const handleDefaultVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDefaultVolume(parseInt(e.target.value) || 0);
+    setDefaultVolume(e.target.value);
+    e.target.classList.remove('error');
+    setErrors(errors.filter((error) => error !== 'defaultVolume'));
+    if (isNaN(Number(e.target.value)) || Number(e.target.value) <= 0) {
+      e.target.classList.add('error');
+      setErrors([...errors, 'defaultVolume'])
+    } 
   };
 
   const handleDefaultRatio = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDefaultRatio(parseInt(e.target.value) || 0);
+    setDefaultRatio(e.target.value);
+    e.target.classList.remove('error');
+    setErrors(errors.filter((error) => error !== 'defaultRatio'));
+    if (isNaN(Number(e.target.value)) || Number(e.target.value) <= 0) {
+      e.target.classList.add('error');
+      setErrors([...errors, 'defaultRatio'])
+    } 
   };
 
   const handleMaxVolumePerOutput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMaxVolumePerOutput(parseInt(e.target.value) || 0);
+    setMaxVolumePerOutput(e.target.value);
+    e.target.classList.remove('error');
+    setErrors(errors.filter((error) => error !== 'maxVolumePerOutput'));
+    if (isNaN(Number(e.target.value)) || Number(e.target.value) <= 0) {
+      e.target.classList.add('error');
+      setErrors([...errors, 'maxVolumePerOutput'])
+    } 
   };
 
   const handleCalibrateDuration = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCalibrateDuration(parseInt(e.target.value) || 0);
+    setCalibrateDuration(e.target.value);
+    e.target.classList.remove('error');
+    setErrors(errors.filter((error) => error !== 'calibrateDuration'));
+    if (isNaN(Number(e.target.value)) || Number(e.target.value) <= 0) {
+      e.target.classList.add('error');
+      setErrors([...errors, 'calibrateDuration'])
+    } 
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -64,10 +94,10 @@ export default function EditDevice({ setTitle, config, setConfig }: { setTitle: 
       action: "editDevice",
       device,
       name: deviceName,
-      defaultVolume,
+      defaultVolume: Number(defaultVolume) || 0,
       defaultRatio,
-      maxVolumePerOutput,
-      calibrateDuration,
+      maxVolumePerOutput: Number(maxVolumePerOutput) || 0,
+      calibrateDuration: Number(calibrateDuration) || 0,
     });
   }
 
@@ -94,7 +124,7 @@ export default function EditDevice({ setTitle, config, setConfig }: { setTitle: 
             <input type="text" className="mb-2 w-full" placeholder="Name" value={defaultRatio} onChange={handleDefaultRatio} />
             <label>Maximum amount of water per output during one watering session</label>
             <div className="flex items-center mb-2">
-              <input type="text" className="mb-2 unit" placeholder="Name" value={maxVolumePerOutput} onChange={handleMaxVolumePerOutput} />
+              <input type="text" className="mb-2 unit" placeholder="Maximum amount of water" value={maxVolumePerOutput} onChange={handleMaxVolumePerOutput} />
               <span className="unit-label mb-2">ml</span>
             </div>
             <label>Calibrate duration</label>
@@ -103,7 +133,7 @@ export default function EditDevice({ setTitle, config, setConfig }: { setTitle: 
               <span className="unit-label mb-2">sec</span>
             </div>
             <div className="text-right mb-4">
-              <button type="submit" className="btn btn-primary">Save</button>
+              <button type="submit" disabled={errors.length > 0} className="btn btn-primary">Save</button>
             </div>
           </div>
         </form>

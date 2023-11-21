@@ -52,7 +52,7 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<Devices devices={devices} setTitle={setPageTitle} />} />
                 <Route path="/schedule" element={<Schedule devices={devices} setTitle={setPageTitle} config={config} />} />
-                <Route path="/output/edit/:device" element={<EditDevice setTitle={setPageTitle} config={config} setConfig={setConfig} />} />
+                <Route path="/output/edit/:device" element={<EditDevice config={config} setConfig={setConfig} />} />
                 <Route path="/output/edit/:device/:outputId" element={<EditOutput setTitle={setPageTitle} config={config} setConfig={setConfig} />} />
                 <Route path="/preferences" element={<Preferences config={config} setTitle={setPageTitle} />} />
               </Routes>

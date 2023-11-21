@@ -28,7 +28,9 @@ export default function ScheduleEvent({ event, config, setIsAdding, setEditedEve
   }
 
   const handleDeleteClick = () => {
-    deleteEvent(event);
+    if (confirm(`Are you sure you want to delete this event?`)) {
+      deleteEvent(event);
+    }
   }
 
   return (<>

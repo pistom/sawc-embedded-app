@@ -25,7 +25,7 @@ type ScheduleEvent = {
 
 type Watering = {
   time: Date;
-  volume: number;
+  volume: number | string;
 }
 
 type ScheduleEventType = 'always' | 'period' | 'once';

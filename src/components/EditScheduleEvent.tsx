@@ -40,6 +40,7 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
   } as ScheduleEvent);
 
   const [repeatType, setRepeatType] = useState('weekdays');
+  const [repeatEvery, setRepeatEvery] = useState<number | string>(1);
 
   useEffect(() => {
     if (editedEvent) {
@@ -71,9 +72,21 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
   }
 
   const handleNewWateringVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.target.classList.remove('is-changed');
+    e.target.nextElementSibling?.classList.remove('is-changed');
     const newEvent = { ...event };
-    newEvent.watering[0].volume = Number(e.target.value);
+    newEvent.watering[0].volume = e.target.value ? Number(e.target.value) : '';
     setEvent(newEvent);
+  }
+
+  const handleNewWateringVolumeBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!e.target.value) {
+      e.target.classList.add('is-changed');
+      e.target.nextElementSibling?.classList.add('is-changed');
+      const newEvent = { ...event };
+      newEvent.watering[0].volume = 0;
+      setEvent(newEvent);
+    }
   }
 
   const handleNewWateringTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,9 +145,22 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
   };
 
   const handleRepeatEveryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.target.classList.remove('is-changed');
+    setRepeatEvery(e.target.value);
+    if (!e.target.value) return;
     const newEvent = { ...event };
     newEvent.repeatEvery = Number(e.target.value);
     setEvent(newEvent);
+  }
+
+  const handleRepeatEveryBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (Number(e.target.value) < 1) {
+      e.target.classList.add('is-changed');
+      setRepeatEvery(1);
+      const newEvent = { ...event };
+      newEvent.repeatEvery = 1;
+      setEvent(newEvent);
+    }
   }
 
   const handleCloseButtonClick = () => {
@@ -182,7 +208,7 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
                 <input type="time" name="time" step={60} id="time" className="form-input" value={getTimeFromDateInHHmmFormat(event.watering[0]?.time)} onChange={handleNewWateringTimeChange} />
               </div>
               <div className="volume flex">
-                <input type="number" name="volume" id="volume" value={event.watering[0]?.volume} onChange={handleNewWateringVolumeChange} className="form-input unit unit-sm" />
+                <input type="number" name="volume" id="volume" value={event.watering[0]?.volume} onChange={handleNewWateringVolumeChange} onBlur={handleNewWateringVolumeBlur} className="form-input unit unit-sm" />
                 <span className="unit-label unit-label-sm flex-initial">ml</span>
               </div>
               <div className="actions">
@@ -235,7 +261,7 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
             )}
             {repeatType === 'repeatevery' && <div className="flex items-center gap-2">
               <span className="text-sm">Every</span>
-              <input type="number" name="repeatEvery" id="repeatEvery" className="form-input w-16" onChange={handleRepeatEveryChange} value={event.repeatEvery || 1} />
+              <input type="number" name="repeatEvery" id="repeatEvery" className="form-input w-16" onChange={handleRepeatEveryChange} onBlur={handleRepeatEveryBlur} value={repeatEvery} />
               <span className="text-sm">days</span>
             </div>}
           </div>

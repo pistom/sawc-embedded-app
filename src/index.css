@@ -53,6 +53,10 @@ form label {
 .form input:disabled, .form select:disabled {
   @apply bg-gray-100 text-gray-500;
 }
+.form input.is-changed, .form span.is-changed {
+  @apply border-blue-600;
+  animation: bounce .6s;
+}
 .form select {
   @apply bg-slate-100;
 }
@@ -118,5 +122,31 @@ form label {
   }
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(.9);
+  }
+  75% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes backgroundFromBlueToWhite {
+  0% {
+    @apply bg-blue-200;
+  }
+  100% {
+    @apply bg-white;
   }
 }

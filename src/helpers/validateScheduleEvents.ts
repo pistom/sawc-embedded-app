@@ -4,7 +4,7 @@ export const validateScheduleEvent = (event: ScheduleEvent): string[] => {
     if (!event.output) errors.push('Output is required');
     if (!event.type) errors.push('Type is required');
     if (event.watering.length === 0) errors.push('You must add at least one watering');
-    if (event.watering.some((watering: Watering) => watering.volume <= 0)) errors.push('Watering volume must be greater than 0');
+    if (event.watering.some((watering: Watering) => Number(watering.volume) <= 0)) errors.push('Watering volume must be greater than 0');
     if (event.watering.some((watering: Watering) => watering.time.getHours() === 0 && watering.time.getMinutes() === 0)) errors.push('Watering time is required');
     if ((event.type === 'period' || event.type === 'always') && event.repeatEvery && event.repeatEvery < 1) errors.push('Repeat every must be greater than 0');
     if ((event.type === 'period' || event.type === 'always') && event.repeatEvery && event.repeatEvery > 365) errors.push('Repeat every must be less than 365');

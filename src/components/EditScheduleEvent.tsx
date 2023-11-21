@@ -73,7 +73,6 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
 
   const handleNewWateringVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.target.classList.remove('is-changed');
-    e.target.nextElementSibling?.classList.remove('is-changed');
     const newEvent = { ...event };
     newEvent.watering[0].volume = e.target.value ? Number(e.target.value) : '';
     setEvent(newEvent);
@@ -82,7 +81,6 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
   const handleNewWateringVolumeBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!e.target.value) {
       e.target.classList.add('is-changed');
-      e.target.nextElementSibling?.classList.add('is-changed');
       const newEvent = { ...event };
       newEvent.watering[0].volume = 0;
       setEvent(newEvent);

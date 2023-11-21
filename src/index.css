@@ -53,9 +53,12 @@ form label {
 .form input:disabled, .form select:disabled {
   @apply bg-gray-100 text-gray-500;
 }
-.form input.is-changed, .form span.is-changed {
+.form input.is-changed, .form input.is-changed + span.unit-label {
   @apply border-blue-600;
   animation: bounce .6s;
+}
+.form input.error, .form input.error + span.unit-label {
+  @apply border-red-600;
 }
 .form select {
   @apply bg-slate-100;

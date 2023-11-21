@@ -12,10 +12,12 @@ interface CalibrateInterface {
 
 const Calibrate = ({ setIsCalibrating, duration, setRatio, output, device }: CalibrateInterface) => {
   const [volume, setVolume] = useState<number>(0);
+  const [volumeRaw, setVolumeRaw] = useState<string>('');
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [isWater, setIsWater] = useState<boolean>(false);
   const [waterIsDone, setWaterIsDone] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>();
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
   useEffect(() => {
     socket && socket.on("message", (newMessage: CalibrationMessage) => {
@@ -73,7 +75,15 @@ const Calibrate = ({ setIsCalibrating, duration, setRatio, output, device }: Cal
   }
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVolume(Math.abs(parseInt(e.target.value) || 0));
+    setVolumeRaw(e.target.value);
+    if (typeof Number(e.target.value) === 'number' && parseInt(e.target.value) >= 0) {
+      e.target.classList.remove('error');
+      setIsDisabled(false);
+      setVolume(Number(e.target.value));
+    } else {
+      e.target.classList.add('error');
+      setIsDisabled(true);
+    }
   };
 
   return <div className="border p-4 rounded-lg border-slate-300 transition">
@@ -98,13 +108,13 @@ const Calibrate = ({ setIsCalibrating, duration, setRatio, output, device }: Cal
     {waterIsDone && <>
       <p className="text-sm">How much water is in the cup?</p>
       <div className="relative flex items-center mb-4 pb-4">
-        <input className="unit" type="number" disabled={!waterIsDone} onChange={handleVolumeChange} value={volume} placeholder="Calibration value" />
+        <input className="unit" type="number" disabled={!waterIsDone} onChange={handleVolumeChange} value={volumeRaw} placeholder="Calibration value" />
         <span className="unit-label">ml</span>
       </div>
     </>}
     <div className="text-right mt-4">
       <button className="btn btn-md mr-2" onClick={handleClose}>Close</button>
-      <button className="btn btn-primary btn-md" disabled={volume === 0} onClick={handleCalculate}>Calculate ratio</button>
+      <button className="btn btn-primary btn-md" disabled={isDisabled} onClick={handleCalculate}>Calculate ratio</button>
     </div>
   </div>
 }

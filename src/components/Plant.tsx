@@ -12,9 +12,11 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
   const [isOn, setIsOn] = useState<boolean>(false);
   const [isWatering, setIsWatering] = useState<boolean>(false);
   const [wateringVolume, setWateringVolume] = useState<number>(defaultVolume || deviceSettings.defaultVolume);
+  const [wateringVolumeRaw, setWateringVolumeRaw] = useState<number | string>(deviceSettings.defaultVolume);
   const [initialWateringTime, setInitialWateringTime] = useState<number>(0);
   const [remainingWateringTime, setRemainingWateringTime] = useState<number>(0);
   const [wateringIn, setWateringIn] = useState<number>(0);
+  const [isDisabledWateringBtn, setIsDisabledWateringBtn] = useState<boolean>(false);
 
   const socketOnCallback = useCallback((newMessage: RemainingTimesMessage) => {
     if (newMessage.status === "remainingTimes" && newMessage.device === deviceId && newMessage.remainingTimes[id]) {
@@ -63,12 +65,18 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
   }, [deviceId, id]);
 
   const handleWateringVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = parseInt(e.target.value) || 0;
-    if (value > deviceSettings.maxVolumePerOutput) {
-      value = deviceSettings.maxVolumePerOutput;
+    setWateringVolumeRaw(e.target.value);
+    if (e.target.value !== "" && parseInt(e.target.value) > 0) {
+      setIsDisabledWateringBtn(false);
+      let value = parseInt(e.target.value);
+      if (value > deviceSettings.maxVolumePerOutput) {
+        value = deviceSettings.maxVolumePerOutput;
+      }
+      setWateringVolume(value);
+      setInitialWateringTime(0);
+    } else {
+      setIsDisabledWateringBtn(true);
     }
-    setWateringVolume(value);
-    setInitialWateringTime(0);
   }
 
   useEffect(() => {
@@ -94,10 +102,10 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
         <h5 className="title">{name ?? `Output ${id}`}</h5>
         <div className="form flex gap-3 mb-3 font-normal text-gray-700">
           <div className="flex items-center">
-            <input className="unit" type="number" disabled={isWatering || wateringIn > 0} value={wateringVolume} onChange={handleWateringVolume} />
+            <input className="unit" type="number" disabled={isWatering || wateringIn > 0} value={wateringVolumeRaw} onChange={handleWateringVolume} />
             <span className="unit-label">ml</span>
           </div>
-          <button className={`waterBtn ${!isOn ? `bg-emerald-700` : `bg-slate-700`}`} onClick={() => handleMessageSubmit(id, wateringVolume)}>
+          <button className={`waterBtn btn ${!isOn ? `bg-emerald-700` : `bg-slate-700`}`} disabled={isDisabledWateringBtn} onClick={() => handleMessageSubmit(id, wateringVolume)}>
             {!isOn ? `Water` : wateringIn > 0 ? `Abort` : `Stop`}
           </button>
         </div>

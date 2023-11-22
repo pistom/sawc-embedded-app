@@ -20,8 +20,11 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
   const { post, get, response } = useFetch()
   const [worker, setWorker] = useState<ServiceHealth>({ status: 'waiting...', memory: 0 });
   const [wateringLogs, setWateringLogs] = useState<string>('');
+  const [controllerWorkingSince, setControllerWorkingSince] = useState<Date | undefined>();
+  const [controllerMemoryUsage, setControllerMemoryUsage] = useState<number | undefined>();
 
   useEffect(() => {
+    socket && socket.emit("message", { action: 'getAppStatus' });
     socket && socket.on("message", (message) => {
       if (message.action === 'heartbeat') {
         if (message.process === 'worker') {
@@ -31,6 +34,10 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
           newWorker.lastHeartbeat = new Date();
           setWorker(newWorker);
         }
+      } else if (message.status === 'appStatus') {
+        setWorker({...worker, lastHeartbeat: new Date(message.worker?.lastHeartbeat)});
+        setControllerWorkingSince(new Date(message.controller?.workingSince));
+        setControllerMemoryUsage(message.controller?.memoryUsage)
       }
     });
   }, []);
@@ -72,6 +79,7 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
     if (response.ok) {
       writeStorage('token', data.token);
       alert('Password changed');
+      window.location.href = '/';
     }
   }
 
@@ -85,7 +93,7 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
     <form className="form">
       {config && config.preferences.token && <>{createPortal(
         <div className="text-right">
-          <button className="btn btn-rounded" onClick={handleLogout}><ArrowLeftOnRectangleIcon className="h-5 w-5" /></button>
+          <button className="btn btn-rounded" title="Logout" onClick={handleLogout}><ArrowLeftOnRectangleIcon className="h-5 w-5" /></button>
         </div>, document.getElementById('afterTitle') as HTMLElement)}
       </>}
       {!config ?
@@ -100,13 +108,21 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
       }
 
     </form>
-    {config && worker && <div className="mt-4">
-      <h1 className="text-2xl mt-8 pt-4 border-t">Services status</h1>
-      <h2>Worker</h2>
-      <p>Status: <span className={`font-bold text-${worker.status === 'online' ? 'green' : worker.status === 'offline' ? 'red' : 'slate'}-500`}>{worker.status}</span></p>
-      <p>Memory: {worker.memory}</p>
-      <p>Last heartbeat: {worker.lastHeartbeat ? worker.lastHeartbeat.toLocaleString() : 'waiting...'}</p>
-    </div>}
+    <h1 className="text-2xl mt-8 pt-4 border-t">Services</h1>
+    <div className="statuses md:flex">
+      {config && <div className="mt-4 md:mr-4 md:pr-4 md:border-r">
+        <h2>Controller</h2>
+        <p>Status: {socket.connected ? <span className="font-bold text-green-500">online</span> : <span className="font-bold text-red-500">offline</span>}</p>
+        <p>Memory: {controllerMemoryUsage}</p>
+        <p>Has been working since: {controllerWorkingSince?.toLocaleString()}</p>
+      </div>}
+      {config && worker && <div className="mt-4">
+        <h2>Worker</h2>
+        <p>Status: <span className={`font-bold text-${worker.status === 'online' ? 'green' : worker.status === 'offline' ? 'red' : 'slate'}-500`}>{worker.status}</span></p>
+        <p>Memory: {worker.memory}</p>
+        <p>Last heartbeat: {worker.lastHeartbeat ? worker.lastHeartbeat.toLocaleString() : 'waiting...'}</p>
+      </div>}
+    </div>
 
     {config && <div className="mt-4">
       <h1 className="text-2xl mt-8 pt-4 border-t">Logs</h1> 

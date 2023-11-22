@@ -10,6 +10,8 @@ interface EditScheduleEventProps {
   errors: string[],
   setErrors: (errors: string[]) => void,
   setIsAdding: (isAdding: boolean) => void,
+  selectedDevice: string | null,
+  selectedOutput: string | null,
 }
 
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as WeekDays[];
@@ -23,15 +25,15 @@ const getNextNearestFullHour = (): Date => {
   return nextHour;
 }
 
-export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEvent, devices, errors, setErrors, setIsAdding }: EditScheduleEventProps) {
+export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEvent, devices, errors, setErrors, setIsAdding, selectedDevice, selectedOutput }: EditScheduleEventProps) {
 
   const inOneMonth = new Date();
   inOneMonth.setMonth(inOneMonth.getMonth() + 1);
 
   const [event, setEvent] = useState<ScheduleEvent>({
     id: -1,
-    device: devices[0].id,
-    output: devices[0].outputs[0].id,
+    device: selectedDevice || devices[0].id,
+    output: selectedOutput || devices[0].outputs[0].id,
     startDate: new Date(),
     endDate: inOneMonth,
     type: 'always',
@@ -184,7 +186,7 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
         </div>
         <div className="field-container">
           <label htmlFor="device">Device</label>
-          <select name="device" id="device" className="form-select w-full" value={event.device} onChange={handleTypeChange}>
+          <select disabled={!!selectedDevice} name="device" id="device" className="form-select w-full" value={event.device} onChange={handleTypeChange}>
             {devices.map((device: DeviceConfig, index: number) => (
               <option key={index} value={device.id}>{device.name}</option>
             ))}
@@ -192,7 +194,7 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
         </div>
         <div className="field-container">
           <label htmlFor="output">Output</label>
-          <select name="output" id="output" className="form-select w-full" value={event.output} onChange={handleOutputChange}>
+          <select disabled={!!selectedOutput} name="output" id="output" className="form-select w-full" value={event.output} onChange={handleOutputChange}>
             {devices.find((device: DeviceConfig) => device.id === event.device)?.outputs.map((output: OutputConfig, index: number) => (
               <option key={index} value={output.id}>{output.name || `Output ${output.id}`}</option>
             ))}

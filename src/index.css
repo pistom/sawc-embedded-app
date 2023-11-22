@@ -33,6 +33,9 @@ h2 {
 .btn.btn-primary {
   @apply bg-teal-800;
 }
+.btn.btn-secondary {
+  @apply bg-stone-800;
+}
 .btn.btn-rounded {
   @apply rounded-full px-2;
 }

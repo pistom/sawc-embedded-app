@@ -82,6 +82,11 @@ export default function EditOutput({ setTitle, config, setConfig }: { setTitle: 
     navigate('/');
   }
 
+  const handleScheduleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    navigate(`/schedule?device=${device}&output=${outputId}`);
+  }
+
   if (!device || !outputId) {
     return <div>Missing device or output id</div>
   }
@@ -116,6 +121,9 @@ export default function EditOutput({ setTitle, config, setConfig }: { setTitle: 
             </select>
             <div className="text-right mb-4">
               <button type="submit" className="btn btn-primary">Save</button>
+            </div>
+            <div className="text-right mb-4">
+              <button className="btn btn-sm btn-secondary" onClick={handleScheduleClick}>Schedule watering</button>
             </div>
           </div>
           <div className="w-full h-72 sm:w-1/3 sm:ml-4 text-center">

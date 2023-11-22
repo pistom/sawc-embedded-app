@@ -7,6 +7,7 @@ import { validateScheduleEvent } from "../helpers/validateScheduleEvents";
 import socket from "../socket";
 import { createPortal } from "react-dom";
 import { CheckCircleIcon, ExclamationTriangleIcon, EyeIcon } from "@heroicons/react/24/outline";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 interface ScheduleProps {
   setTitle: (title: string) => void,
@@ -21,6 +22,8 @@ export default function Schedule({ setTitle, config, devices }: ScheduleProps) {
   const [errors, setErrors] = useState<string[]>([]);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [editedEvent, setEditedEvent] = useState<ScheduleEvent | null>(null);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   useEffect(() => { initializeSchedule() }, [])
 
@@ -123,6 +126,13 @@ export default function Schedule({ setTitle, config, devices }: ScheduleProps) {
     }
   }
 
+  const handleRemoveFilters = () => {
+    searchParams.delete('device');
+    searchParams.delete('output');
+    navigate(`/schedule?${searchParams.toString()}`); 
+    // window.location.href = `/schedule?${searchParams.toString()}`;
+  }
+
   if (!config) return (<div className="mx-4 sm:mx-0">Loading...</div>);
   return (<div className="mx-4 sm:mx-0">
     {isInitialized === null && <>
@@ -137,14 +147,25 @@ export default function Schedule({ setTitle, config, devices }: ScheduleProps) {
     
     {loading && 'Loading...'}
     {error && 'Error!'}
-    {schedule && schedule.map((event: ScheduleEvent) => (
+    {searchParams.get('device') || searchParams.get('output') ?
+      <h1 className="text-lg mb-4">
+        Schedule for: 
+        <span className="mx-2">{config.devices[searchParams.get('device') || '']?.name}</span>
+        <span className="font-bold mr-4">{config.devices[searchParams.get('device') || '']?.outputs[searchParams.get('output') || '']?.name || `Output ${searchParams.get('output')}` }</span>
+        <span><button onClick={handleRemoveFilters} className="btn btn-sm">Show events for all plants</button></span>
+      </h1> : null
+    }
+    {schedule && schedule
+      .filter((event: ScheduleEvent) => searchParams.get('device') ? event.device === searchParams.get('device') : true)
+      .filter((event: ScheduleEvent) => searchParams.get('output') ? event.output === searchParams.get('output') : true)
+      .map((event: ScheduleEvent) => (
       <ScheduleEvent key={event.id} event={event} setSchedule={setSchedule} schedule={schedule} config={config} setIsAdding={setIsAdding} setEditedEvent={setEditedEvent} deleteEvent={handleDelete} />
     ))}
     <p className="text-right">
       <button className="btn btn-primary" onClick={() => setIsAdding(true)}>Add new planing</button>
     </p>
     {isAdding &&
-      <EditScheduleEvent editedEvent={editedEvent} setEditedEvent={setEditedEvent} errors={errors} setErrors={setErrors} addEvent={addEvent} setIsAdding={setIsAdding} config={config} devices={devices} />
+      <EditScheduleEvent editedEvent={editedEvent} setEditedEvent={setEditedEvent} errors={errors} setErrors={setErrors} addEvent={addEvent} setIsAdding={setIsAdding} config={config} devices={devices} selectedDevice={searchParams.get('device')} selectedOutput={searchParams.get('output')} />
     }
   </div>)
 }

@@ -56,7 +56,7 @@ exports[`<Plant></Plant> should render the component 1`] = `
           </span>
         </div>
         <button
-          class="waterBtn bg-emerald-700"
+          class="waterBtn btn bg-emerald-700"
         >
           Water
         </button>

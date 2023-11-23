@@ -7,7 +7,13 @@ import { createPortal } from "react-dom";
 import './output.css'
 import Calibrate from "../components/Calibrate.js";
 
-export default function EditOutput({ setTitle, config, setConfig }: { setTitle: (title: string) => void, config: Config | null, setConfig: (config: Config) => void }) {
+interface EditOutputProps {
+  setTitle: (title: string) => void;
+  config: Config | null;
+  setConfig: (config: Config) => void;
+}
+
+export default function EditOutput({ setTitle, config, setConfig }: EditOutputProps) {
   const { device, outputId } = useParams();
   const [outputData, setOutputData] = useState<OutputConfig>();
   const [name, setName] = useState<string>('');

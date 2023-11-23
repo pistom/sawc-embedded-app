@@ -13,12 +13,14 @@ interface ServiceHealth {
   status: string;
   memory: number;
   lastHeartbeat?: Date;
+  onlineApiStatus?: string;
 }
 
 export default function Preferences({ config, setTitle }: PreferencesProps) {
   const [token, setToken] = useState<string>('');
   const { post, get, response } = useFetch()
   const [worker, setWorker] = useState<ServiceHealth>({ status: 'waiting...', memory: 0 });
+  const [workerOnline, setWorkerOnline] = useState<ServiceHealth>({ status: 'waiting...', memory: 0 });
   const [wateringLogs, setWateringLogs] = useState<string>('');
   const [controllerWorkingSince, setControllerWorkingSince] = useState<Date | undefined>();
   const [controllerMemoryUsage, setControllerMemoryUsage] = useState<number | undefined>();
@@ -34,8 +36,17 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
           newWorker.lastHeartbeat = new Date();
           setWorker(newWorker);
         }
+        if (message.process === 'workeronline') {
+          const newWorkerOnline = { ...workerOnline };
+          newWorkerOnline.status = 'online';
+          newWorkerOnline.memory = message.memory;
+          newWorkerOnline.lastHeartbeat = new Date();
+          newWorkerOnline.onlineApiStatus = message.onlineApiStatus;
+          setWorkerOnline(newWorkerOnline);
+        }
       } else if (message.status === 'appStatus') {
         setWorker({...worker, lastHeartbeat: new Date(message.worker?.lastHeartbeat)});
+        setWorkerOnline({...workerOnline, lastHeartbeat: new Date(message.workerOnline?.lastHeartbeat)});
         setControllerWorkingSince(new Date(message.controller?.workingSince));
         setControllerMemoryUsage(message.controller?.memoryUsage)
       }
@@ -52,6 +63,17 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
     }, 10000);
     return () => clearInterval(interval);
   }, [worker]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (workerOnline) {
+        const newWorkerOnline = { ...workerOnline };
+        newWorkerOnline.status = 'offline';
+        setWorkerOnline(newWorkerOnline);
+      }
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [workerOnline]);
 
   useEffect(() => {
     setTitle('Preferences');
@@ -109,18 +131,25 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
 
     </form>
     <h1 className="text-2xl mt-8 pt-4 border-t">Services</h1>
-    <div className="statuses md:flex">
-      {config && <div className="mt-4 md:mr-4 md:pr-4 md:border-r">
+    <div className="statuses flex flex-col md:flex-row gap-4">
+      {config && <div className="flex-1">
         <h2>Controller</h2>
         <p>Status: {socket.connected ? <span className="font-bold text-green-500">online</span> : <span className="font-bold text-red-500">offline</span>}</p>
         <p>Memory: {controllerMemoryUsage}</p>
         <p>Has been working since: {controllerWorkingSince?.toLocaleString()}</p>
       </div>}
-      {config && worker && <div className="mt-4">
-        <h2>Worker</h2>
+      {config && worker && <div className="flex-1">
+        <h2>Schedule worker</h2>
         <p>Status: <span className={`font-bold text-${worker.status === 'online' ? 'green' : worker.status === 'offline' ? 'red' : 'slate'}-500`}>{worker.status}</span></p>
         <p>Memory: {worker.memory}</p>
         <p>Last heartbeat: {worker.lastHeartbeat ? worker.lastHeartbeat.toLocaleString() : 'waiting...'}</p>
+      </div>}
+      {config && workerOnline && <div className="flex-1">
+        <h2>Online API worker</h2>
+        <p>Status: <span className={`font-bold text-${workerOnline.status === 'online' ? 'green' : workerOnline.status === 'offline' ? 'red' : 'slate'}-500`}>{workerOnline.status}</span></p>
+        <p>Memory: {workerOnline.memory}</p>
+        <p>Last heartbeat: {workerOnline.lastHeartbeat ? workerOnline.lastHeartbeat.toLocaleString() : 'waiting...'}</p>
+        <p>Api status: <span className={workerOnline.onlineApiStatus !== 'online' ? 'text-red-500' : ''}>{workerOnline.status === 'online' ? workerOnline.onlineApiStatus || 'waiting...' : 'unknown'}</span></p>
       </div>}
     </div>
 

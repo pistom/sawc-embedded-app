@@ -33,6 +33,12 @@ export default function App() {
     },
   } as IncomingOptions;
 
+  socket && socket.on("message", (newMessage: ConfigMessage) => {
+    if (newMessage.status === "configFileEdited") {
+      setConfig(newMessage.config);
+    }
+  });
+
   return (
     <BrowserRouter>
       <div className="min-h-full">

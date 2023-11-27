@@ -18,6 +18,7 @@ export default function EditOutput({ setTitle, config, setConfig }: EditOutputPr
   const [outputData, setOutputData] = useState<OutputConfig>();
   const [name, setName] = useState<string>('');
   const [image, setImage] = useState<string>('');
+  const [onlinePlantsIds, setOnlinePlantsIds] = useState<string[]>([]);
   const [defaultVolume, setDefaultVolume] = useState<number>(0);
   const [defaultVolumeRaw, setDefaultVolumeRaw] = useState<string>('0');
   const [ratio, setRatio] = useState<number>(0);
@@ -43,6 +44,7 @@ export default function EditOutput({ setTitle, config, setConfig }: EditOutputPr
       setName(outputData?.name ?? '');
       setImage(outputData?.image ?? '');
       setDefaultVolume(outputData?.defaultVolume ?? config.devices[device ?? 0]?.settings.defaultVolume ?? 0);
+      setOnlinePlantsIds(outputData?.onlinePlantsIds ?? []);
       setDefaultVolumeRaw(outputData?.defaultVolume ? outputData.defaultVolume.toString() : config.devices[device ?? 0]?.settings.defaultVolume.toString());
       setRatio(outputData?.ratio ?? config.devices[device ?? 0]?.settings.defaultRatio ?? 0);
       setCalibrateDuration(config.devices[device ?? 0]?.settings.calibrateDuration ?? 0);
@@ -106,7 +108,7 @@ export default function EditOutput({ setTitle, config, setConfig }: EditOutputPr
         <form onSubmit={handleSubmit} className="form sm:flex sm:items-start">
           <div className="sm:w-2/3">
             <label htmlFor="volume">Name</label>
-            <input type="text" className="mb-2 w-full" placeholder="Name" value={name} onChange={handleNameChange} />
+            <input disabled={onlinePlantsIds.length > 0} type="text" className="mb-2 w-full" placeholder="Name" value={name} onChange={handleNameChange} />
             <label htmlFor="volume">Default watering volume (0 for default device value)</label>
             <div id="volume" className="flex items-center mb-2">
               <input className="unit" type="number" value={defaultVolumeRaw} onChange={handleDefaultVolumeChange} />
@@ -121,7 +123,7 @@ export default function EditOutput({ setTitle, config, setConfig }: EditOutputPr
               {isCalibrating && <Calibrate duration={calibrateDuration} setRatio={setRatio} setIsCalibrating={setIsCalibrating} output={outputId} device={device} />}
             </div>
             <label htmlFor="image">Image</label>
-            <select id="image" onChange={handleImageChange} value={image} className="mb-4 w-full" >
+            <select disabled={onlinePlantsIds.length > 0} id="image" onChange={handleImageChange} value={image} className="mb-4 w-full" >
               <option value="">Select image</option>
               {[...Array(7)].map((_, i) => <option key={i} value={`0${i + 1}.jpg`}>Image {i + 1}</option>)}
             </select>

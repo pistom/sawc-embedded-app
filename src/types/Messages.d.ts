@@ -5,6 +5,7 @@
     status: string;
     duration: number;
     message?: string;
+    source?: string;
   }
 
   type RemainingTimesMessage = Message & {

@@ -10,6 +10,7 @@ type OutputConfig = {
   defaultVolume?: number; // milliliters
   ratio?: number; // miilliliters per second
   disabled?: boolean;
+  onlinePlantsIds?: string[];
 };
 
 type Output = {

@@ -95,7 +95,7 @@ export default function EditDevice({ config, setConfig }: EditDeviceProps) {
       device,
       name: deviceName,
       defaultVolume: Number(defaultVolume) || 0,
-      defaultRatio,
+      defaultRatio: Number(defaultRatio) || 0,
       maxVolumePerOutput: Number(maxVolumePerOutput) || 0,
       calibrateDuration: Number(calibrateDuration) || 0,
     });

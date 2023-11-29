@@ -11,6 +11,7 @@ type OutputConfig = {
   ratio?: number; // miilliliters per second
   disabled?: boolean;
   onlinePlantsIds?: string[];
+  sync?: boolean;
 };
 
 type Output = {

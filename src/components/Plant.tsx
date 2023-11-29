@@ -5,7 +5,6 @@ import { Cog6ToothIcon } from '@heroicons/react/24/solid'
 import { Link } from "react-router-dom";
 import './plant.css';
 
-
 export default function Plant({ device, output }: { device: DeviceConfig, output: OutputConfig }) {
   const { id: deviceId, settings: deviceSettings } = device;
   const { id, name, image, defaultVolume } = output;
@@ -26,9 +25,6 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
         setRemainingWateringTime(newMessage.remainingTimes[id].wateringTime + newMessage.remainingTimes[id].wateringIn);
         setInitialWateringTime(newMessage.remainingTimes[id].wateringTime);
       } else {
-        if (id === "6") {
-          console.dir(newMessage.remainingTimes[id]);
-        }
         setWateringIn(() => newMessage.remainingTimes[id].wateringIn);
         setWateringVolume(newMessage.remainingTimes[id].wateringVolume);
         setInitialWateringTime((initialWateringTime) => initialWateringTime === 0 ? newMessage.remainingTimes[id].wateringTime : initialWateringTime);

@@ -6,6 +6,7 @@ import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { createPortal } from "react-dom";
 import './output.css'
 import Calibrate from "../components/Calibrate.js";
+import Toggle from "../components/form/Toggle.js";
 
 interface EditOutputProps {
   setTitle: (title: string) => void;
@@ -19,6 +20,7 @@ export default function EditOutput({ setTitle, config, setConfig }: EditOutputPr
   const [name, setName] = useState<string>('');
   const [image, setImage] = useState<string>('');
   const [onlinePlantsIds, setOnlinePlantsIds] = useState<string[]>([]);
+  const [isSynchronised, setIsSynchronised] = useState<boolean>(false);
   const [defaultVolume, setDefaultVolume] = useState<number>(0);
   const [defaultVolumeRaw, setDefaultVolumeRaw] = useState<string>('0');
   const [ratio, setRatio] = useState<number>(0);
@@ -44,12 +46,13 @@ export default function EditOutput({ setTitle, config, setConfig }: EditOutputPr
       setName(outputData?.name ?? '');
       setImage(outputData?.image ?? '');
       setDefaultVolume(outputData?.defaultVolume ?? config.devices[device ?? 0]?.settings.defaultVolume ?? 0);
+      setIsSynchronised(outputData?.sync ?? false);
       setOnlinePlantsIds(outputData?.onlinePlantsIds ?? []);
       setDefaultVolumeRaw(outputData?.defaultVolume ? outputData.defaultVolume.toString() : config.devices[device ?? 0]?.settings.defaultVolume.toString());
       setRatio(outputData?.ratio ?? config.devices[device ?? 0]?.settings.defaultRatio ?? 0);
       setCalibrateDuration(config.devices[device ?? 0]?.settings.calibrateDuration ?? 0);
     }
-  }, [config, device, outputData?.defaultVolume, outputData?.image, outputData?.name, outputData?.ratio, outputId, setTitle]);
+  }, [config, device, outputData?.defaultVolume, outputData?.image, outputData?.name, outputData?.onlinePlantsIds, outputData?.ratio, outputData?.sync, outputId, setTitle]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -74,7 +77,7 @@ export default function EditOutput({ setTitle, config, setConfig }: EditOutputPr
     if (isCalibrating) {
       socket && socket.emit("message", { action: "stopCalibrating", device, output: outputId });
     }
-    socket && socket.emit("message", { action: "editOutput", device, output: outputId, name, image, defaultVolume, ratio });
+    socket && socket.emit("message", { action: "editOutput", device, output: outputId, name, image, defaultVolume, ratio, sync: isSynchronised });
   }
 
   const handleCalibrate = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -127,6 +130,10 @@ export default function EditOutput({ setTitle, config, setConfig }: EditOutputPr
               <option value="">Select image</option>
               {[...Array(7)].map((_, i) => <option key={i} value={`0${i + 1}.jpg`}>Image {i + 1}</option>)}
             </select>
+            <label htmlFor="image">Sync with houseplants.life</label>
+            <div className="mb-2 text-left">
+              <Toggle checked={isSynchronised} onChange={() => setIsSynchronised(!isSynchronised)} label="" />
+            </div>
             <div className="text-right mb-4">
               <button type="submit" className="btn btn-primary">Save</button>
             </div>

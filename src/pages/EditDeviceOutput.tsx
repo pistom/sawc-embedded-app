@@ -12,6 +12,7 @@ const EditDeviceOutput = ({ outputId, output, device, setConfig }: EditDeviceOut
 
   const [pin, setPin] = useState<number>(output.pin || 0);
   const [disabled, setDisabled] = useState<boolean>(output.disabled || false);
+  const [sync, setSync] = useState<boolean>(output.sync || false);
   const [edited, setEdited] = useState<boolean>(false);
 
   useEffect(() => {
@@ -42,16 +43,23 @@ const EditDeviceOutput = ({ outputId, output, device, setConfig }: EditDeviceOut
 
   const handleDisableCheck = () => {
     setDisabled(!disabled);
-    socket && socket.emit("message", { action: "editDeviceOutput", device, output: outputId, disabled: !disabled });
+    socket && socket.emit("message", { action: "editDeviceOutput", device, output: outputId, disabled: !disabled, sync });
+  };
+  const handleSyncCheck = () => {
+    if (sync && !confirm('This action will completely remove all synchronised plants from this output. Are you sure you want to continue?')) {
+      return;
+    }
+    setSync(!sync);
+    socket && socket.emit("message", { action: "editOutput", device, output: outputId, sync: !sync });
   };
 
   return (
-    <div key={outputId} className={`flex items-center p-2 mb-2 transition duration-3000 row ${edited ? 'saved': ''}`}>
+    <div key={outputId} className={`flex items-center p-2 mb-2 transition duration-3000 row ${edited ? 'saved' : ''}`}>
       <form className="form flex items-center">
-        <div className="flex-none w-24 font-bold">{outputId}</div>
-        <div className="flex-1 w-1/3">
+        <div className="flex-none w-20 font-bold">{outputId}</div>
+        <div className="flex-1 w-1/3 pr-4">
           <input
-            className="w-24"
+            className="w-full sm:w-20"
             type="number"
             placeholder="Pin"
             value={pin}
@@ -59,8 +67,13 @@ const EditDeviceOutput = ({ outputId, output, device, setConfig }: EditDeviceOut
             onBlur={handlePinBlur}
           />
         </div>
-        <div className="flex-1 w-1/3 text-right">
-          <Toggle checked={!disabled} onChange={handleDisableCheck} />
+        <div className="flex-none w-[100px] flex text-center">
+          <div className="flex-1">
+            <Toggle checked={!disabled} onChange={handleDisableCheck} />
+          </div>
+          <div className="flex-1">
+            <Toggle disabled={disabled} checked={sync} onChange={handleSyncCheck} />
+          </div>
         </div>
       </form>
     </div>

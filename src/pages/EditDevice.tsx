@@ -22,16 +22,22 @@ export default function EditDevice({ config, setConfig }: EditDeviceProps) {
   const [calibrateDuration, setCalibrateDuration] = useState<number|string>(0);
   const [outputs, setOutputs] = useState<Output | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
+  const [saved, setSaved] = useState<boolean>(false);
 
   useEffect(() => {
     socket && socket.on("message", (newMessage: ConfigMessage) => {
       if (newMessage.status === "configEdited") {
         setConfig(newMessage.config);
-        navigate('/')
       }
     });
     setBackBtnElement(document.getElementById('backBtn') as HTMLElement)
   }, [setConfig, navigate]);
+
+  useEffect(() => {
+    if (saved) {
+      navigate('/');
+    }
+  }, [config]);
 
   useEffect(() => {
     if (config) {
@@ -90,6 +96,7 @@ export default function EditDevice({ config, setConfig }: EditDeviceProps) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSaved(() => true);
     socket && socket.emit("message", {
       action: "editDevice",
       device,
@@ -141,9 +148,12 @@ export default function EditDevice({ config, setConfig }: EditDeviceProps) {
       <div className="card mb-4 mx-4 p-4 sm:mx-0">
         <h2 className="mb-4">Outputs config</h2>
         <div className="flex border-b-2 font-bold mb-2 p-2">
-          <div className="flex-none w-24 font-bold">Output ID</div>
-          <div className="flex-1 w-1/3">Pin</div>
-          <div className="flex-1 w-1/3 text-right">Active</div>
+          <div className="flex-none w-20 font-bold">Output ID</div>
+          <div className="flex-1 w-100">Pin</div>
+          <div className="flex-none flex text-right">
+            <div className="flex-1 mr-4">Active</div>
+            <div className="flex-1">Sync</div>
+          </div>
         </div>
         <div>
           {outputs && Object.keys(outputs).map((outputId) => {

@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import socket from '../socket.ts';
 import Timer from "./Timer";
-import { Cog6ToothIcon } from '@heroicons/react/24/solid'
+import { Cog6ToothIcon, LockOpenIcon } from '@heroicons/react/24/solid'
 import { Link } from "react-router-dom";
 import './plant.css';
 
 export default function Plant({ device, output }: { device: DeviceConfig, output: OutputConfig }) {
   const { id: deviceId, settings: deviceSettings } = device;
-  const { id, name, image, defaultVolume } = output;
+  const { id, name, image, defaultVolume, sync } = output;
   const [isOn, setIsOn] = useState<boolean>(false);
   const [isWatering, setIsWatering] = useState<boolean>(false);
   const [wateringVolume, setWateringVolume] = useState<number>(defaultVolume || deviceSettings.defaultVolume);
@@ -86,10 +86,14 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
       socket && socket.emit("message", { action: 'stopWater', device: deviceId, output: id });
     }
   };
+  
+  let imageSrc = image ? `/plants/${image}` : "/plant.svg";
+  !name && (imageSrc = "/no-plant.svg");
 
   return <div className="w-full md:w-1/2 lg:w-1/3">
-    <div className="plant">
-      <img className="image bg-slate-200" src={image ? `/plants/${image}` : "/plant.svg"} alt="" />
+    <div className="plant relative">
+      {!sync && <span className="absolute bottom-2 right-2 text-sm text-slate-400 ">Not synced <LockOpenIcon className="align-sub h-5 w-5 inline-block" /></span>}
+      <img className="image bg-slate-200" src={imageSrc} alt="" />
       <div className="details">
         {!isOn &&
           <Link to={`/output/edit/${deviceId}/${id}`} className="editBtn">

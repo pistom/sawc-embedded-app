@@ -6,7 +6,7 @@
    viewBox="0 0 256 256"
    xml:space="preserve"
    id="svg3"
-   sodipodi:docname="plant.svg"
+   sodipodi:docname="no-plant.svg"
    inkscape:version="1.3.1 (9b9bdc1480, 2023-11-25, custom)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -28,7 +28,7 @@
    inkscape:window-x="3205"
    inkscape:window-y="10"
    inkscape:window-maximized="1"
-   inkscape:current-layer="svg3" />
+   inkscape:current-layer="g3" />
 
 <defs
    id="defs1">
@@ -37,16 +37,8 @@
    style="opacity:1;fill:none;fill-rule:nonzero;stroke:none;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none"
    transform="matrix(2.0439315,0,0,1.9595204,35.879674,39.727501)"
    id="g3">
-	<path
-   d="m 37.712,41.541 c -2.437,-10.14 2.919,-19.609 8.772,-25.137 -6.221,11.54 -7.41,20.104 -3.461,33.177 l 2.29,-0.854 C 44.431,46.263 43.9,43.854 43.628,41.486 51.858,39.131 57.511,34.277 58.859,25.56 59.796,13.651 52.042,6.72 43.718,0.117 c 3.04,9.758 -11.581,17.964 -10.296,30.949 0.271,2.741 0.697,5.33 1.326,7.825"
-   style="opacity:1;fill:#7fb241;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none"
-   stroke-linecap="round"
-   id="path1" />
-	<path
-   d="M 34.069,30.999 C 34.986,18.076 47.668,9.901 43.718,0.116 45.112,8.332 33.947,12.496 31.055,22.311 29.48,28.147 29.904,33.763 34.748,38.89 34.119,36.396 33.937,33.751 34.069,30.999 Z"
-   style="opacity:1;fill:#719c40;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none"
-   stroke-linecap="round"
-   id="path2" />
+	
+	
 	<polygon
    points="70.46,47.61 43.69,47.61 19.54,47.61 21.23,61.09 68.77,61.09 "
    style="opacity:1;fill:#a07e63;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none"

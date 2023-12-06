@@ -72,7 +72,7 @@ const EditDeviceOutput = ({ outputId, output, device, setConfig }: EditDeviceOut
             <Toggle checked={!disabled} onChange={handleDisableCheck} />
           </div>
           <div className="flex-1">
-            <Toggle disabled={disabled} checked={sync} onChange={handleSyncCheck} />
+            {outputId !== 'pump' && <Toggle disabled={disabled} checked={sync} onChange={handleSyncCheck} />}
           </div>
         </div>
       </form>

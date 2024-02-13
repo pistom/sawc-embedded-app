@@ -1,6 +1,6 @@
 export const getWateringDevicesFromConfig = (config: Config): DeviceConfig[] => {
   const devices = Object.keys(config.devices)
-    .filter((device: string) => config.devices[device].type === 'MCP23017')
+    .filter((device: string) => config.preferences.wateringDeviceTypes.includes(config.devices[device].type))
     .map((device: string) => {
       return {
         ...config.devices[device],

@@ -34,9 +34,14 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
     if (newMessage.device === deviceId && newMessage.output === id) {
       switch (newMessage.status) {
         case "done":
+        case "error":
           setTimeout(() => {
             setIsOn(false);
             setIsWatering(false);
+            if (newMessage.status === "error") {
+              // TODO: Display error message
+              console.error(newMessage.context);
+            }
           }, 1000);
           setWateringIn(0);
           break;

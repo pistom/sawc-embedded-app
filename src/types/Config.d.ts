@@ -31,6 +31,7 @@ type Config = {
   preferences: {
     token: string;
     theme: string;
+    wateringDeviceTypes: string[];
   }
   devices: {
     [key: string]: Device;

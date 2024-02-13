@@ -6,6 +6,7 @@
     duration: number;
     message?: string;
     source?: string;
+    context?: unknown;
   }
 
   type RemainingTimesMessage = Message & {

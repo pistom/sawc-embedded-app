@@ -90,6 +90,7 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
 
   useEffect(() => {
     socket && socket.on("message", socketOnCallback);
+    return () => {socket.off("message")};
   }, [socketOnCallback]);
 
   const handleMessageSubmit = (id: string, volume: number) => {
@@ -105,7 +106,7 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
 
   return <div className="w-full md:w-1/2 lg:w-1/3">
     <div className="plant relative">
-      {!sync && <span className="absolute bottom-2 right-2 text-sm text-slate-400 ">Not synced <LockOpenIcon className="align-sub h-5 w-5 inline-block" /></span>}
+      {!sync && !isOn && <span className="absolute bottom-2 right-2 text-sm text-slate-400 ">Not synced <LockOpenIcon className="align-sub h-5 w-5 inline-block" /></span>}
       <img className="image bg-slate-200" src={imageSrc} alt="" />
       <div className="details">
         {!isOn &&

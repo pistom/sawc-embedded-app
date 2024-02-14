@@ -1,12 +1,17 @@
 
-  type Message =  {
+  type Message = {
     device: string;
     output: string;
     status: string;
     duration: number;
     message?: string;
     source?: string;
-    context?: unknown;
+    context?: MessageContext;
+  }
+
+  type MessageContext = {
+    address?: string;
+    errno?: number;
   }
 
   type RemainingTimesMessage = Message & {

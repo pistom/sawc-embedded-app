@@ -1,0 +1,9 @@
+.userMessage-success {
+    @apply text-lime-700 bg-lime-200;
+}
+.userMessage-warning {
+    @apply text-yellow-800 bg-yellow-200;
+}
+.userMessage-error {
+    @apply text-red-700 bg-red-200;
+}

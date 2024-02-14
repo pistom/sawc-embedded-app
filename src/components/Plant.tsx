@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import socket from '../socket.ts';
 import Timer from "./Timer";
 import { Cog6ToothIcon, LockOpenIcon } from '@heroicons/react/24/solid'
 import { Link } from "react-router-dom";
 import './plant.css';
+import { UserMessagesContext } from "../context/UserMessagesContext";
 
 export default function Plant({ device, output }: { device: DeviceConfig, output: OutputConfig }) {
   const { id: deviceId, settings: deviceSettings } = device;
@@ -16,6 +17,8 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
   const [remainingWateringTime, setRemainingWateringTime] = useState<number>(0);
   const [wateringIn, setWateringIn] = useState<number>(0);
   const [isDisabledWateringBtn, setIsDisabledWateringBtn] = useState<boolean>(false);
+  const userMessagesContext = useContext(UserMessagesContext);
+  const { addMessage } = userMessagesContext;
 
   const socketOnCallback = useCallback((newMessage: RemainingTimesMessage) => {
     if (newMessage.status === "remainingTimes" && newMessage.device === deviceId && newMessage.remainingTimes[id]) {
@@ -35,11 +38,16 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
       switch (newMessage.status) {
         case "done":
         case "error":
+        case "stopError":
           setTimeout(() => {
             setIsOn(false);
             setIsWatering(false);
-            if (newMessage.status === "error") {
-              // TODO: Display error message
+            if (newMessage.status === "error" && newMessage.context?.errno === -113) {
+              addMessage({
+                type: 'error',
+                title: `Can not reach network module (${newMessage.context?.address})`,
+                message: 'Check that the device is switched on and properly configured.'
+              });
               console.error(newMessage.context);
             }
           }, 1000);

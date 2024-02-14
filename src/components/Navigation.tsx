@@ -77,7 +77,7 @@ export function Navigation() {
             </div>
           </div>
 
-          <Disclosure.Panel className="md:hidden fixed bg-gray-800 w-full shadow-2xl">
+          <Disclosure.Panel className="md:hidden absolute bg-gray-800 w-full shadow-2xl">
             <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
               {navigation.map((item) => (
                 <NavLink

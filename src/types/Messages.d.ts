@@ -11,7 +11,7 @@
 
   type MessageContext = {
     address?: string;
-    errno?: number;
+    errno?: number|string;
   }
 
   type RemainingTimesMessage = Message & {

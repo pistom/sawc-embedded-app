@@ -42,13 +42,24 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
           setTimeout(() => {
             setIsOn(false);
             setIsWatering(false);
-            if (newMessage.status === "error" && newMessage.context?.errno === -113) {
-              addMessage({
-                type: 'error',
-                title: `Can not reach network module (${newMessage.context?.address})`,
-                message: 'Check that the device is switched on and properly configured.'
-              });
-              console.error(newMessage.context);
+            if (newMessage.status === "error") {
+              switch (newMessage.context?.errno) {
+                case -113:
+                case "EHOSTUNREACH":
+                  addMessage({
+                    type: 'error',
+                    title: `Can not reach network module (${newMessage.context?.address})`,
+                    message: 'Check that the device is switched on and properly configured.'
+                  });
+                  break;
+                case -123:
+                  addMessage({
+                    type: 'error',
+                    title: `Output number not found (${newMessage.device}, output: ${newMessage.output})`,
+                    message: 'Check the device configuration.'
+                  });
+                  break;
+              }
             }
           }, 1000);
           setWateringIn(0);

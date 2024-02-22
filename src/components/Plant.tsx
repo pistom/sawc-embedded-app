@@ -59,6 +59,13 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
                     message: 'Check the device configuration.'
                   });
                   break;
+                case "INVALIDTOKEN":
+                  addMessage({
+                    type: 'error',
+                    title: `Invalid token`,
+                    message: 'Check the device configuration.'
+                  });
+                  break;
               }
             }
           }, 1000);

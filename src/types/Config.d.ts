@@ -24,6 +24,8 @@ type Device = {
   id?: string;
   type: string;
   settings: DeviceSettings;
+  token?: string;
+  address?: string;
 };
 
 type Config = {

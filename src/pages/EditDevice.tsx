@@ -16,6 +16,9 @@ export default function EditDevice({ config, setConfig }: EditDeviceProps) {
   const navigate = useNavigate();
   const [backBtnElement, setBackBtnElement] = useState<HTMLElement | null>(null);
   const [deviceName, setDeviceName] = useState<string>('');
+  const [deviceType, setDeviceType] = useState<string>('');
+  const [deviceToken, setDeviceToken] = useState<string>('');
+  const [deviceAddress, setDeviceAddress] = useState<string>('');
   const [defaultVolume, setDefaultVolume] = useState<number|string>(0);
   const [defaultRatio, setDefaultRatio] = useState<number|string>(0);
   const [maxVolumePerOutput, setMaxVolumePerOutput] = useState<number|string>(0);
@@ -41,17 +44,30 @@ export default function EditDevice({ config, setConfig }: EditDeviceProps) {
 
   useEffect(() => {
     if (config) {
+      setDeviceType(config.devices[device ?? 0]?.type ?? 'network');
       setDeviceName(config.devices[device ?? 0]?.name ?? `${device}`);
       setDefaultVolume(config.devices[device ?? 0]?.settings.defaultVolume ?? 0);
       setDefaultRatio(config.devices[device ?? 0]?.settings.defaultRatio ?? 0);
       setMaxVolumePerOutput(config.devices[device ?? 0]?.settings.maxVolumePerOutput ?? 0);
       setCalibrateDuration(config.devices[device ?? 0]?.settings.calibrateDuration ?? 0);
       setOutputs(config.devices[device ?? 0]?.outputs ?? null);
+      if(config.devices[device ?? 0]?.type === 'network') {
+        setDeviceAddress(config.devices[device ?? 0]?.address ?? "");
+        setDeviceToken(config.devices[device ?? 0]?.token ?? "");
+      }
     }
   }, [config, device]);
 
   const handleDeviceNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDeviceName(e.target.value);
+  };
+
+  const handleDeviceAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDeviceAddress(e.target.value);
+  };
+
+  const handleDeviceTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDeviceToken(e.target.value);
   };
 
   const handleDefaultVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,6 +121,8 @@ export default function EditDevice({ config, setConfig }: EditDeviceProps) {
       defaultRatio: Number(defaultRatio) || 0,
       maxVolumePerOutput: Number(maxVolumePerOutput) || 0,
       calibrateDuration: Number(calibrateDuration) || 0,
+      address: deviceAddress,
+      token: deviceToken,
     });
   }
 
@@ -122,6 +140,12 @@ export default function EditDevice({ config, setConfig }: EditDeviceProps) {
           <div className="w-full">
             <label htmlFor="volume">Name</label>
             <input type="text" className="mb-2 w-full" placeholder="Name" value={deviceName} onChange={handleDeviceNameChange} />
+            {deviceType === 'network' && <>
+              <label htmlFor="volume">Address</label>
+              <input type="text" className="mb-2 w-full" placeholder="Name" value={deviceAddress} onChange={handleDeviceAddressChange} />
+              <label htmlFor="volume">Token</label>
+              <input type="text" className="mb-2 w-full" placeholder="Name" value={deviceToken} onChange={handleDeviceTokenChange} />
+            </>}
             <label>Default Watering Volume</label>
             <div className="flex items-center mb-2">
               <input type="text" className="mb-2 unit" placeholder="Name" value={defaultVolume} onChange={handleDefaultVolume} />

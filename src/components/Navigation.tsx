@@ -27,7 +27,7 @@ export function Navigation() {
                     />
                   </Link>
                 </div>
-                <div className="flex-shrink-0 text-2xl text-slate-200">
+                <div className="flex-shrink-0 text-2xl text-slate-200 pl-2">
                   Watering Can
                 </div>
                 <div className="hidden md:block">

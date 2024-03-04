@@ -59,6 +59,13 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
     if (newEvent.type === 'period' && !newEvent.endDate) newEvent.endDate = inOneMonth;
     setEvent(newEvent);
   }
+
+  const handleDeviceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newEvent = { ...event };
+    newEvent.device = e.target.value;
+    setEvent(newEvent);
+  }
+
   const handleOutputChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newEvent = { ...event };
     newEvent.output = e.target.value;
@@ -186,7 +193,7 @@ export default function EditScheduleEvent({ addEvent, editedEvent, setEditedEven
         </div>
         <div className="field-container">
           <label htmlFor="device">Device</label>
-          <select disabled={!!selectedDevice} name="device" id="device" className="form-select w-full" value={event.device} onChange={handleTypeChange}>
+          <select disabled={!!selectedDevice} name="device" id="device" className="form-select w-full" value={event.device} onChange={handleDeviceChange}>
             {devices.map((device: DeviceConfig, index: number) => (
               <option key={index} value={device.id}>{device.name}</option>
             ))}

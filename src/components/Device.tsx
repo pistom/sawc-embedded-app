@@ -1,14 +1,34 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Plant from "./Plant";
 import socket from "../socket";
 import { Link } from "react-router-dom";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
 
+type PlantMessagesType = {
+  [key: string]: Message;
+}
+
 export default function Device({ device }: { device: DeviceConfig }) {
+  const [plantMessages, setPlantMessages] = useState<PlantMessagesType>({});
+  const [remainingTimes, setRemainingTimes] = useState<RemainingTimesMessage>();
 
   useEffect(() => {
     socket && socket.emit("message", { action: "getRemainingTimes", device: device.id });
-  });
+  }, [device.id]);
+
+  useEffect(() => {
+    socket && socket.on("message", function (newMessage: Message) {
+      if (newMessage.status === "remainingTimes" && newMessage.device === device.id) {
+        setRemainingTimes(newMessage as RemainingTimesMessage);
+      } else {
+        if (newMessage.device === device.id && newMessage.output) {
+          setPlantMessages((prev) => ({ ...prev, [newMessage.output]: newMessage }));
+        }
+      }
+    });
+    
+    return () => {socket.off("message")};
+  }, [device.id]);
 
   return (
     <div className="relative">
@@ -21,6 +41,8 @@ export default function Device({ device }: { device: DeviceConfig }) {
           <Plant
             device={device}
             output={output}
+            plantMessage={plantMessages[output.id]}
+            remainingTime={remainingTimes?.remainingTimes[output.id]}
             key={`plant_${device.id}_${output.id}`}
           />
         ))}

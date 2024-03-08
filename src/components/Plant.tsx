@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import socket from '../socket.ts';
 import Timer from "./Timer";
 import { Cog6ToothIcon, LockOpenIcon } from '@heroicons/react/24/solid'
@@ -6,7 +6,14 @@ import { Link } from "react-router-dom";
 import './plant.css';
 import { UserMessagesContext } from "../context/UserMessagesContext";
 
-export default function Plant({ device, output }: { device: DeviceConfig, output: OutputConfig }) {
+interface PlantProps {
+  device: DeviceConfig;
+  output: OutputConfig;
+  plantMessage?: Message;
+  remainingTime?: { wateringTime: number, wateringIn: number, wateringVolume: number };
+}
+
+export default function Plant({ device, output, plantMessage, remainingTime }: PlantProps) {
   const { id: deviceId, settings: deviceSettings } = device;
   const { id, name, image, defaultVolume, sync } = output;
   const [isOn, setIsOn] = useState<boolean>(false);
@@ -20,42 +27,45 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
   const userMessagesContext = useContext(UserMessagesContext);
   const { addMessage } = userMessagesContext;
 
-  const socketOnCallback = useCallback((newMessage: RemainingTimesMessage) => {
-    if (newMessage.status === "remainingTimes" && newMessage.device === deviceId && newMessage.remainingTimes[id]) {
-      setWateringVolume(newMessage.remainingTimes[id].wateringVolume);
-      if (newMessage.remainingTimes[id].wateringIn < 0) {
+  useEffect(() => {
+    if (remainingTime) {
+      setWateringVolume(remainingTime.wateringVolume);
+      if (remainingTime.wateringIn < 0) {
         setIsWatering(true);
-        setRemainingWateringTime(newMessage.remainingTimes[id].wateringTime + newMessage.remainingTimes[id].wateringIn);
-        setInitialWateringTime(newMessage.remainingTimes[id].wateringTime);
+        setRemainingWateringTime(remainingTime.wateringTime + remainingTime.wateringIn);
+        setInitialWateringTime(remainingTime.wateringTime);
       } else {
-        setWateringIn(() => newMessage.remainingTimes[id].wateringIn);
-        setWateringVolume(newMessage.remainingTimes[id].wateringVolume);
-        setInitialWateringTime((initialWateringTime) => initialWateringTime === 0 ? newMessage.remainingTimes[id].wateringTime : initialWateringTime);
+        setWateringIn(() => remainingTime.wateringIn);
+        setWateringVolume(remainingTime.wateringVolume);
+        setInitialWateringTime((initialWateringTime) => initialWateringTime === 0 ? remainingTime.wateringTime : initialWateringTime);
       }
       setIsOn(true);
     }
-    if (newMessage.device === deviceId && newMessage.output === id) {
-      switch (newMessage.status) {
+  }, [remainingTime]);
+
+  useEffect(() => {
+    if (plantMessage) {
+      switch (plantMessage.status) {
         case "done":
         case "error":
         case "stopError":
           setTimeout(() => {
             setIsOn(false);
             setIsWatering(false);
-            if (newMessage.status === "error") {
-              switch (newMessage.context?.errno) {
+            if (plantMessage.status === "error") {
+              switch (plantMessage.context?.errno) {
                 case -113:
                 case "EHOSTUNREACH":
                   addMessage({
                     type: 'error',
-                    title: `Can not reach network module (${newMessage.context?.address})`,
+                    title: `Can not reach network module (${plantMessage.context?.address})`,
                     message: 'Check that the device is switched on and properly configured.'
                   });
                   break;
                 case -123:
                   addMessage({
                     type: 'error',
-                    title: `Output number not found (${newMessage.device}, output: ${newMessage.output})`,
+                    title: `Output number not found (${plantMessage.device}, output: ${plantMessage.output})`,
                     message: 'Check the device configuration.'
                   });
                   break;
@@ -80,16 +90,16 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
         case "watering":
           setIsOn(true);
           setIsWatering(true);
-          setInitialWateringTime((initialWateringTime) => initialWateringTime === 0 ? newMessage.duration : initialWateringTime);
-          setRemainingWateringTime(newMessage.duration);
+          setInitialWateringTime((initialWateringTime) => initialWateringTime === 0 ? plantMessage.duration : initialWateringTime);
+          setRemainingWateringTime(plantMessage.duration);
           setWateringIn(0);
           break;
         case "calibratingError":
-          console.dir('calibratingError', newMessage);
+          console.error('calibratingError', plantMessage);
           break;
       }
     }
-  }, [deviceId, id]);
+  }, [plantMessage, addMessage]);
 
   const handleWateringVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWateringVolumeRaw(e.target.value);
@@ -105,11 +115,6 @@ export default function Plant({ device, output }: { device: DeviceConfig, output
       setIsDisabledWateringBtn(true);
     }
   }
-
-  useEffect(() => {
-    socket && socket.on("message", socketOnCallback);
-    return () => {socket.off("message")};
-  }, [socketOnCallback]);
 
   const handleMessageSubmit = (id: string, volume: number) => {
     if (!isOn) {

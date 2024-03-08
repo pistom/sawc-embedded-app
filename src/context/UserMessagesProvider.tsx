@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { UserMessagesContext } from "./UserMessagesContext";
 
 interface UserMessageProviderProps {
@@ -8,13 +8,13 @@ interface UserMessageProviderProps {
 export const UserMessageProvider = ({ children }: UserMessageProviderProps) => {
   const [messages, setMessages] = useState<UserMessage[]>([]);
 
-  const addMessage = (message: UserMessage) => {
+  const addMessage = useCallback((message: UserMessage) => {
     setMessages((prevMessages) => [...prevMessages, message]);
-  };
+  }, []);
 
-  const clearMessages = () => {
+  const clearMessages = useCallback(() => {
     setMessages([]);
-  };
+  }, []);
 
   return (
     <UserMessagesContext.Provider value={{ messages, addMessage, clearMessages }}>

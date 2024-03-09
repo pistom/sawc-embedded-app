@@ -1,19 +1,19 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import socket from '../socket.ts';
 import Timer from "./Timer";
 import { Cog6ToothIcon, LockOpenIcon } from '@heroicons/react/24/solid'
 import { Link } from "react-router-dom";
 import './plant.css';
-import { UserMessagesContext } from "../context/UserMessagesContext";
 
 interface PlantProps {
   device: DeviceConfig;
   output: OutputConfig;
   plantMessage?: Message;
   remainingTime?: { wateringTime: number, wateringIn: number, wateringVolume: number };
+  displayErrors: (plantMessage: Message) => void;
 }
 
-export default function Plant({ device, output, plantMessage, remainingTime }: PlantProps) {
+export default function Plant({ device, output, plantMessage, remainingTime, displayErrors }: PlantProps) {
   const { id: deviceId, settings: deviceSettings } = device;
   const { id, name, image, defaultVolume, sync } = output;
   const [isOn, setIsOn] = useState<boolean>(false);
@@ -24,37 +24,6 @@ export default function Plant({ device, output, plantMessage, remainingTime }: P
   const [remainingWateringTime, setRemainingWateringTime] = useState<number>(0);
   const [wateringIn, setWateringIn] = useState<number>(0);
   const [isDisabledWateringBtn, setIsDisabledWateringBtn] = useState<boolean>(false);
-  const userMessagesContext = useContext(UserMessagesContext);
-  const { addMessage } = userMessagesContext;
-
-  const displayErrors = useCallback((plantMessage: Message) => {
-    if (plantMessage.status === "error") {
-      switch (plantMessage.context?.errno) {
-        case -113:
-        case "EHOSTUNREACH":
-          addMessage({
-            type: 'error',
-            title: `Can not reach network module (${plantMessage.context?.address})`,
-            message: 'Check that the device is switched on and properly configured.'
-          });
-          break;
-        case -123:
-          addMessage({
-            type: 'error',
-            title: `Output number not found (${plantMessage.device}, output: ${plantMessage.output})`,
-            message: 'Check the device configuration.'
-          });
-          break;
-        case "INVALIDTOKEN":
-          addMessage({
-            type: 'error',
-            title: `Invalid token`,
-            message: 'Check the device configuration.'
-          });
-          break;
-      }
-    }
-  }, [addMessage]);
 
   useEffect(() => {
     if (remainingTime) {
@@ -71,6 +40,10 @@ export default function Plant({ device, output, plantMessage, remainingTime }: P
       setIsOn(true);
     }
   }, [remainingTime]);
+
+  useEffect(() => {
+    plantMessage && displayErrors(plantMessage);
+  }, [plantMessage, displayErrors]);
 
   useEffect(() => {
     if (plantMessage) {
@@ -101,9 +74,8 @@ export default function Plant({ device, output, plantMessage, remainingTime }: P
           console.error('calibratingError', plantMessage);
           break;
       }
-      displayErrors(plantMessage);
     }
-  }, [plantMessage, displayErrors]);
+  }, [plantMessage]);
 
   const handleWateringVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWateringVolumeRaw(e.target.value);

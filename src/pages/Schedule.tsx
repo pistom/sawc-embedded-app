@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useFetch } from "use-http";
 import ScheduleEvent from "../components/ScheduleEvent";
 import "./schedule.css";
@@ -8,14 +8,14 @@ import socket from "../socket";
 import { createPortal } from "react-dom";
 import { CheckCircleIcon, ExclamationTriangleIcon, EyeIcon } from "@heroicons/react/24/outline";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { AppParamsContext } from "../context/AppParamsContext";
 
 interface ScheduleProps {
-  setTitle: (title: string) => void,
   config: Config | null,
   devices: DeviceConfig[],
 }
 
-export default function Schedule({ setTitle, config, devices }: ScheduleProps) {
+export default function Schedule({ config, devices }: ScheduleProps) {
   const [schedule, setSchedule] = useState<ScheduleEvent[]>([]);
   const [isInitialized, setIsInitialized] = useState<Date | boolean | null>(null);
   const { get, post, del, put, response, loading, error, cache } = useFetch()
@@ -27,9 +27,10 @@ export default function Schedule({ setTitle, config, devices }: ScheduleProps) {
 
   useEffect(() => { initializeSchedule() }, [])
 
+  const appParams = useContext(AppParamsContext);
   useEffect(() => {
-    setTitle('Schedule');
-  }, [setTitle]);
+    appParams.setPageTitle('Schedule');
+  }, [appParams]);
 
   useEffect(() => {
     socket && socket.on("message", (message) => {

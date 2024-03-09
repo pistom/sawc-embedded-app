@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import socket from '../socket.js';
 import { Link } from "react-router-dom";
@@ -7,14 +7,14 @@ import { createPortal } from "react-dom";
 import './output.css'
 import Calibrate from "../components/Calibrate.js";
 import Toggle from "../components/form/Toggle.js";
+import { AppParamsContext } from "../context/AppParamsContext.js";
 
 interface EditOutputProps {
-  setTitle: (title: string) => void;
   config: Config | null;
   setConfig: (config: Config) => void;
 }
 
-export default function EditOutput({ setTitle, config, setConfig }: EditOutputProps) {
+export default function EditOutput({ config, setConfig }: EditOutputProps) {
   const { device, outputId } = useParams();
   const [outputData, setOutputData] = useState<OutputConfig>();
   const [name, setName] = useState<string>('');
@@ -41,6 +41,8 @@ export default function EditOutput({ setTitle, config, setConfig }: EditOutputPr
     });
     setBackBtnElement(document.getElementById('backBtn') as HTMLElement)
   }, [setConfig, navigate]);
+
+  const setTitle = useContext(AppParamsContext).setPageTitle;
 
   useEffect(() => {
     if (config) {

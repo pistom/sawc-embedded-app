@@ -15,7 +15,7 @@ describe('<Plant></Plant>', () => {
     const device = { id: "device", name: "test", outputs: [output], settings: { maxVolumePerOutput: 100, defaultVolume: 100, defaultRatio: 2, calibrateDuration: 2 }};
     const { container } = render(
       <MemoryRouter initialEntries={['/']}>
-        <Plant device={device} output={output} />
+        <Plant device={device} output={output} displayErrors={() => {}} />
       </MemoryRouter>
     );
     expect(container.firstChild).toMatchSnapshot();

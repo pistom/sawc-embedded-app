@@ -8,7 +8,12 @@ type PlantMessagesType = {
   [key: string]: Message;
 }
 
-export default function Device({ device }: { device: DeviceConfig }) {
+interface DeviceProps {
+  device: DeviceConfig;
+  displayErrors: (plantMessage: Message) => void;
+}
+
+export default function Device({ device, displayErrors }: DeviceProps) {
   const [plantMessages, setPlantMessages] = useState<PlantMessagesType>({});
   const [remainingTimes, setRemainingTimes] = useState<RemainingTimesMessage>();
 
@@ -43,6 +48,7 @@ export default function Device({ device }: { device: DeviceConfig }) {
             output={output}
             plantMessage={plantMessages[output.id]}
             remainingTime={remainingTimes?.remainingTimes[output.id]}
+            displayErrors={displayErrors}
             key={`plant_${device.id}_${output.id}`}
           />
         ))}

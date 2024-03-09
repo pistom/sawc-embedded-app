@@ -1,12 +1,12 @@
 import { writeStorage } from "@rehooks/local-storage";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useFetch } from "use-http";
 import socket from "../socket";
 import { createPortal } from "react-dom";
 import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
+import { AppParamsContext } from "../context/AppParamsContext";
 
 interface PreferencesProps {
-  setTitle: (title: string) => void;
   config: Config | null;
 }
 interface ServiceHealth {
@@ -16,7 +16,7 @@ interface ServiceHealth {
   onlineApiStatus?: string;
 }
 
-export default function Preferences({ config, setTitle }: PreferencesProps) {
+export default function Preferences({ config }: PreferencesProps) {
   const [token, setToken] = useState<string>('');
   const { post, get, response } = useFetch()
   const [worker, setWorker] = useState<ServiceHealth>({ status: 'waiting...', memory: 0 });
@@ -75,9 +75,10 @@ export default function Preferences({ config, setTitle }: PreferencesProps) {
     return () => clearInterval(interval);
   }, [workerOnline]);
 
+  const appParams = useContext(AppParamsContext);
   useEffect(() => {
-    setTitle('Preferences');
-  }, [setTitle]);
+    appParams.setPageTitle('Preferences');
+  }, [appParams]);
 
   useEffect(() => {
     get('/logs/watering').then((logs) => {

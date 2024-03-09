@@ -10,13 +10,18 @@ export function useSocket(socket: Socket) {
         setError(new Error(data.message));
       }
     });
+
     socket.on('connect', () => setConnected(true));
     socket.on('disconnect', () => setConnected(false));
+
     return () => {
-      socket.off('connect', () => setConnected(true));
-      socket.off('disconnect', () => setConnected(false));
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('welcome_message');
+      setConnected(false);
+      setError(null);
     };
-  }, [socket, socket.connected]);
+  }, [socket]);
 
   return [connected, error];
 }

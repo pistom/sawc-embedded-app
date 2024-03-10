@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import { Navigation } from './components/Navigation';
 import Devices from './pages/Devices';
 
@@ -14,6 +14,9 @@ import useLocalStorage from '@rehooks/local-storage';
 import UserMessage from './components/UserMessage';
 import { AppParamsContext } from './context/AppParamsContext';
 import apiOptions from './helpers/apiOptions';
+import Error from './components/Error';
+import { ErrorBoundary } from 'react-error-boundary';
+import NotFound from './pages/NotFound';
 
 export default function App() {
   const [config, setConfig, configError] = useFetchConfig();
@@ -45,18 +48,25 @@ export default function App() {
             </div>
           </header>
           <main>
+
             {!config && !configError && <div className="error">Loading config...</div>}
             {!cnnected && !error && <div className="modal"><div className="error relative rounded-lg bg-blue-100 text-blue-500 text-sm p-4 pr-10 shadow-lg">Connecting to the device controller...</div></div>}
             <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-              <Suspense fallback={<div>Loading...</div>}>
-                <Routes>
-                  <Route path="/" element={<Devices devices={devices} />} />
-                  <Route path="/schedule" element={<ScheduleLazy devices={devices} config={config} />} />
-                  <Route path="/output/edit/:device" element={<EditDevice config={config} setConfig={setConfig} />} />
-                  <Route path="/output/edit/:device/:outputId" element={<EditOutput config={config} setConfig={setConfig} />} />
-                  <Route path="/preferences" element={<PreferencesLazy config={config} />} />
-                </Routes>
-              </Suspense>
+              <ErrorBoundary FallbackComponent={Error}>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <Routes>
+                    <Route path="/" element={<Devices devices={devices} />} >
+                      <Route path="schedule" element={<ScheduleLazy devices={devices} config={config} />} />
+                      <Route path="output" element={<Outlet />}>
+                        <Route path="edit/:device" element={<EditDevice config={config} setConfig={setConfig} />} />
+                        <Route path="edit/:device/:outputId" element={<EditOutput config={config} setConfig={setConfig} />} />
+                      </Route>
+                      <Route path="/preferences" element={<PreferencesLazy config={config} />} />
+                    </Route>
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </ErrorBoundary>
             </div>
           </main>
         </ApiProvider>

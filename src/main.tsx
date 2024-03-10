@@ -7,10 +7,10 @@ import { AppParamsProvider } from './context/AppParamsProvider.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <AppParamsProvider>
-      <UserMessageProvider>
-        <App />
-      </UserMessageProvider>
-    </AppParamsProvider>
+      <AppParamsProvider>
+        <UserMessageProvider>
+          <App />
+        </UserMessageProvider>
+      </AppParamsProvider>
   </React.StrictMode>,
 )

@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { useFetch } from "use-http";
 import socket from "../socket";
 import { createPortal } from "react-dom";
-import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftEndOnRectangleIcon } from "@heroicons/react/24/outline";
 import { AppParamsContext } from "../context/AppParamsContext";
 
 interface PreferencesProps {
@@ -116,7 +116,7 @@ export default function Preferences({ config }: PreferencesProps) {
     <form className="form">
       {config && config.preferences.token && <>{createPortal(
         <div className="text-right">
-          <button className="btn btn-rounded" title="Logout" onClick={handleLogout}><ArrowLeftOnRectangleIcon className="h-5 w-5" /></button>
+          <button className="btn btn-rounded flex" title="Logout" onClick={handleLogout}><ArrowLeftEndOnRectangleIcon className="h-5 w-5" /> Logout</button>
         </div>, document.getElementById('afterTitle') as HTMLElement)}
       </>}
       {!config ?
@@ -129,8 +129,8 @@ export default function Preferences({ config }: PreferencesProps) {
           <button className="btn btn-primary ml-2" onClick={handleSetNewToken}>Set</button>
         </>
       }
-
     </form>
+
     <h1 className="text-2xl mt-8 pt-4 border-t">Services</h1>
     <div className="statuses flex flex-col md:flex-row gap-4">
       {config && <div className="flex-1">

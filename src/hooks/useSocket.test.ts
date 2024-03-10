@@ -22,8 +22,9 @@ describe("useSocket", () => {
     });
   });
 
-  afterAll(() => {
+  afterAll(async () => {
     io.close();
+    clientSocket.disconnect();
     clientSocket.close();
   });
 
@@ -42,18 +43,21 @@ describe("useSocket", () => {
     done();
   });
 
-  test.only("socket emits error on welcome_message", async () => {
-    const { result } = renderHook(() => useSocket(clientSocket));
-    expect(result.current[0]).toBe(true);
-    expect(result.current[1]).toBe(null);
-    const errorMessage = "Test error message";
+  test("socket emits error on welcome_message", async () => {
 
-    io.emit("welcome_message", { status: "error", message: errorMessage });
-
-    await waitFor(() => {
+    clientSocket.on('connect', async () => {
+      const { result } = renderHook(() => useSocket(clientSocket));
       expect(result.current[0]).toBe(true);
-      expect(result.current[1]?.toString()).toBe((new Error(errorMessage)).toString());
+      expect(result.current[1]).toBe(null);
+      const errorMessage = "Test error message";
+      io.emit("welcome_message", { status: "error", message: errorMessage });
+      await waitFor(() => {
+        expect(result.current[0]).toBe(true);
+        expect(result.current[1]?.toString()).toBe((new Error(errorMessage)).toString());
+      });
     });
 
+    clientSocket.connect();
   });
+
 });

@@ -17,6 +17,7 @@ import apiOptions from './helpers/apiOptions';
 import Error from './components/Error';
 import { ErrorBoundary } from 'react-error-boundary';
 import NotFound from './pages/NotFound';
+import PageTitle from './components/PageTitle';
 
 export default function App() {
   const [config, setConfig, configError] = useFetchConfig();
@@ -40,34 +41,26 @@ export default function App() {
         <ApiProvider url={`http://${window.location.hostname}:3001`} options={apiOptions(token)}>
           <Navigation />
           <UserMessage />
-          <header className="bg-white shadow">
-            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-              <div className="text-3xl font-bold tracking-tight text-gray-900 flex">
-                <span id="backBtn" className="flex-none"></span><span className="flex-1">{pageTitle}</span><span id="afterTitle"></span>
-              </div>
-            </div>
-          </header>
+          <PageTitle  title={pageTitle} />
           <main>
-
             {!config && !configError && <div className="error">Loading config...</div>}
             {!cnnected && !error && <div className="modal"><div className="error relative rounded-lg bg-blue-100 text-blue-500 text-sm p-4 pr-10 shadow-lg">Connecting to the device controller...</div></div>}
-            <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-              <ErrorBoundary FallbackComponent={Error}>
-                <Suspense fallback={<div>Loading...</div>}>
-                  <Routes>
-                    <Route path="/" element={<Devices devices={devices} />} >
-                      <Route path="schedule" element={<ScheduleLazy devices={devices} config={config} />} />
-                      <Route path="output" element={<Outlet />}>
-                        <Route path="edit/:device" element={<EditDevice config={config} setConfig={setConfig} />} />
-                        <Route path="edit/:device/:outputId" element={<EditOutput config={config} setConfig={setConfig} />} />
-                      </Route>
-                      <Route path="/preferences" element={<PreferencesLazy config={config} />} />
+            <ErrorBoundary FallbackComponent={Error}>
+              <Suspense fallback={<div>Loading...</div>}>
+                <Routes>
+                  <Route path="/" element={<div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8"><Outlet /></div>} >
+                    <Route path="" element={<Devices devices={devices} />} />
+                    <Route path="schedule" element={<ScheduleLazy devices={devices} config={config} />} />
+                    <Route path="output" element={<Outlet />}>
+                      <Route path="edit/:device" element={<EditDevice config={config} setConfig={setConfig} />} />
+                      <Route path="edit/:device/:outputId" element={<EditOutput config={config} setConfig={setConfig} />} />
                     </Route>
+                    <Route path="/preferences" element={<PreferencesLazy config={config} />} />
                     <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </Suspense>
-              </ErrorBoundary>
-            </div>
+                  </Route>
+                </Routes>
+              </Suspense>
+            </ErrorBoundary>
           </main>
         </ApiProvider>
       </div>

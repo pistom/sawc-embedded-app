@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import socket from '../socket.js';
 import { Link } from "react-router-dom";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { createPortal } from "react-dom";
 import EditDeviceOutput from "./EditDeviceOutput.js";
+import { AppParamsContext } from "../context/AppParamsContext.js";
 
 interface EditDeviceProps {
   config: Config | null,
@@ -26,6 +27,7 @@ export default function EditDevice({ config, setConfig }: EditDeviceProps) {
   const [outputs, setOutputs] = useState<Output | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [saved, setSaved] = useState<boolean>(false);
+  const setTitle = useContext(AppParamsContext).setPageTitle;
 
   useEffect(() => {
     socket && socket.on("message", (newMessage: ConfigMessage) => {
@@ -55,8 +57,9 @@ export default function EditDevice({ config, setConfig }: EditDeviceProps) {
         setDeviceAddress(config.devices[device ?? 0]?.address ?? "");
         setDeviceToken(config.devices[device ?? 0]?.token ?? "");
       }
+      setTitle(`Devices / ${deviceName}`);
     }
-  }, [config, device]);
+  }, [config, device, deviceName, setTitle]);
 
   const handleDeviceNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDeviceName(e.target.value);

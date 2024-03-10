@@ -19,7 +19,7 @@ export default function Device({ device, displayErrors }: DeviceProps) {
 
   useEffect(() => {
     socket && socket.emit("message", { action: "getRemainingTimes", device: device.id });
-  }, [device.id]);
+  }, [device.id, device.name]);
 
   useEffect(() => {
     socket && socket.on("message", function (newMessage: Message) {

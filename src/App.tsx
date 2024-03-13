@@ -41,7 +41,7 @@ export default function App() {
         <ApiProvider url={`http://${window.location.hostname}:3001`} options={apiOptions(token)}>
           <Navigation />
           <UserMessage />
-          <PageTitle  title={pageTitle} />
+          <PageTitle title={pageTitle} />
           <main>
             {!config && !configError && <div className="error">Loading config...</div>}
             {!cnnected && !error && <div className="modal"><div className="error relative rounded-lg bg-blue-100 text-blue-500 text-sm p-4 pr-10 shadow-lg">Connecting to the device controller...</div></div>}

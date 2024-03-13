@@ -19,4 +19,38 @@ export const getWateringDevicesFromConfig = (config: Config): DeviceConfig[] => 
   return devices;
 };
 
-export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+export interface SleepInterface {
+  wait: () => Promise<void>;
+  elapsedTime: () => number;
+  resume: () => void;
+  cancel: () => void;
+}
+
+export const sleep = function(duration: number): SleepInterface {
+  let timeoutId: NodeJS.Timeout;
+  let resolveFunction: (value?: unknown) => void = () => {};
+  let rejectFunction: (v?: unknown) => void = () => {};
+  const startTime = Date.now();
+  const promise = new Promise((resolve, reject) => {
+    resolveFunction = resolve;
+    rejectFunction = reject;
+    timeoutId = setTimeout(resolve, duration * 1000);
+  });
+  const sleepObject = {
+    wait: () => promise as Promise<void>,
+    elapsedTime: () => {
+      return (Date.now() - startTime) / 1000; // Get the elapsed time
+    },
+    resume: () => {
+      clearTimeout(timeoutId);
+      resolveFunction();
+    },
+    cancel: () => {
+      clearTimeout(timeoutId);
+      Promise.race([promise]).then(
+        () => rejectFunction()
+      );
+    }
+  };
+  return sleepObject;
+}

@@ -27,6 +27,7 @@ export default function Plant({ device, output, plantMessage, remainingTime, dis
 
   useEffect(() => {
     if (remainingTime) {
+      setIsDisabledWateringBtn(false);
       setWateringVolume(remainingTime.wateringVolume);
       if (remainingTime.wateringIn < 0) {
         setIsWatering(true);
@@ -47,6 +48,7 @@ export default function Plant({ device, output, plantMessage, remainingTime, dis
 
   useEffect(() => {
     if (plantMessage) {
+      setIsDisabledWateringBtn(false);
       switch (plantMessage.status) {
         case "done":
         case "error":
@@ -93,6 +95,7 @@ export default function Plant({ device, output, plantMessage, remainingTime, dis
   }
 
   const handleMessageSubmit = (id: string, volume: number) => {
+    setIsDisabledWateringBtn(true);
     if (!isOn) {
       socket && socket.emit("message", { action: 'startWater', device: deviceId, output: id, volume });
     } else {

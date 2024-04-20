@@ -27,7 +27,7 @@
   }
 }
 .plant .image {
-  @apply object-cover rounded-t-lg w-32 h-max rounded-none rounded-l-lg;
+  @apply object-cover rounded-t-lg w-32 h-auto rounded-none rounded-l-lg;
 }
 @screen md {
   .plant .image {

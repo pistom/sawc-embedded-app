@@ -159,9 +159,11 @@ export default function Schedule({ config, devices }: ScheduleProps) {
     {schedule && schedule
       .filter((event: ScheduleEvent) => searchParams.get('device') ? event.device === searchParams.get('device') : true)
       .filter((event: ScheduleEvent) => searchParams.get('output') ? event.output === searchParams.get('output') : true)
-      .map((event: ScheduleEvent) => (
-      <ScheduleEvent key={event.id} event={event} setSchedule={setSchedule} schedule={schedule} config={config} setIsAdding={setIsAdding} setEditedEvent={setEditedEvent} deleteEvent={handleDelete} />
-    ))}
+      .sort((a: ScheduleEvent, b: ScheduleEvent) => a.device.localeCompare(b.device))
+      .map((event: ScheduleEvent, i: number, arr: ScheduleEvent[]) => { 
+        const header = (i === 0 || arr[i - 1].device !== event.device) ? (<h2 key={event.id} className="device">{config.devices[event.device].name}</h2>) : <></>;
+        return <>{header}<ScheduleEvent key={event.id} event={event} setSchedule={setSchedule} schedule={schedule} config={config} setIsAdding={setIsAdding} setEditedEvent={setEditedEvent} deleteEvent={handleDelete} /></>
+     })}
     <p className="text-right">
       <button className="btn btn-primary" onClick={() => setIsAdding(true)}>Add new planing</button>
     </p>

@@ -35,7 +35,7 @@ export default function ScheduleEvent({ event, config, setIsAdding, setEditedEve
 
   return (<>
     <div className="event card">
-      <p className="title">{outputName} <span>{deviceName}</span></p>
+      <p className="title">{outputName} <span>{deviceName} / output: {event.output}</span></p>
       <div className="details">
         <div className="type border-r flex-none w-20">
           {event.type === 'always' && <ArrowPathIcon className="icon" />}

@@ -1,29 +1,39 @@
 .plants {
-  @apply inline-flex flex-wrap w-full;
+  @apply grid grid-cols-1 w-full gap-4 px-3 mb-6;
 }
 .plant {
-  @apply flex flex-row bg-white border border-gray-200 rounded-lg shadow ml-4 mr-4 mb-4 items-stretch;
+  @apply flex flex-row bg-white border border-gray-200 rounded-lg shadow items-stretch;
+}
+
+.sync-status {
+  @apply absolute bottom-2 right-2 text-sm text-slate-400;
 }
 @screen md {
-  .plants > div:nth-child(odd) .plant {
-    @apply mr-2 ml-0;
-  }
-  .plants > div:nth-child(even) .plant {
-    @apply ml-2 mr-0;
+  .plants {
+    @apply grid-cols-2 px-0;
   }
   .plant {
     @apply flex-col;
   }
 }
 @screen lg {
-  .plants > div:nth-child(3n-2) .plant {
-    @apply ml-0 mr-4;
+  .plants {
+    @apply grid-cols-3;
   }
-  .plants > div:nth-child(3n-1) .plant {
-    @apply ml-2 mr-2;
+  .plants.compact {
+    @apply grid-cols-5;
   }
-  .plants > div:nth-child(3n) .plant {
-    @apply ml-4 mr-4;
+  .plants.compact .plant .image {
+    @apply w-48 h-20;
+  }
+  .plants.compact .plant .title {
+    @apply text-lg text-ellipsis whitespace-nowrap overflow-hidden;
+  }
+  .plants.compact .plant .details {
+    @apply pb-0;
+  }
+  .plants.compact .plant .sync-status {
+    @apply hidden;
   }
 }
 .plant .image {

@@ -18,6 +18,7 @@ import Error from './components/Error';
 import { ErrorBoundary } from 'react-error-boundary';
 import NotFound from './pages/NotFound';
 import PageTitle from './components/PageTitle';
+import CompactView from './pages/Compact';
 
 export default function App() {
   const [config, setConfig, configError] = useFetchConfig();
@@ -58,6 +59,7 @@ export default function App() {
                     <Route path="/preferences" element={<PreferencesLazy config={config} />} />
                     <Route path="*" element={<NotFound />} />
                   </Route>
+                  <Route path="compact" element={<CompactView devices={devices} />} />
                 </Routes>
               </Suspense>
             </ErrorBoundary>

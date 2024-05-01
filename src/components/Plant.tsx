@@ -106,9 +106,9 @@ export default function Plant({ device, output, plantMessage, remainingTime, dis
   let imageSrc = image ? `/plants/${image}` : "/plant.svg";
   !name && (imageSrc = "/no-plant.svg");
 
-  return <div className="w-full md:w-1/2 lg:w-1/3">
+  return <div className="w-full">
     <div className="plant relative">
-      {!sync && !isOn && <span className="absolute bottom-2 right-2 text-sm text-slate-400 ">Not synced <LockOpenIcon className="align-sub h-5 w-5 inline-block" /></span>}
+      {!sync && !isOn && <span className="sync-status">Not synced <LockOpenIcon className="align-sub h-5 w-5 inline-block" /></span>}
       <img className="image bg-slate-200" src={imageSrc} alt="" />
       <div className="details">
         {!isOn &&

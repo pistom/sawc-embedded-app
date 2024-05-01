@@ -11,9 +11,10 @@ type PlantMessagesType = {
 interface DeviceProps {
   device: DeviceConfig;
   displayErrors: (plantMessage: Message) => void;
+  compact?: boolean;
 }
 
-export default function Device({ device, displayErrors }: DeviceProps) {
+export default function Device({ device, displayErrors, compact }: DeviceProps) {
   const [plantMessages, setPlantMessages] = useState<PlantMessagesType>({});
   const [remainingTimes, setRemainingTimes] = useState<RemainingTimesMessage>();
 
@@ -41,7 +42,7 @@ export default function Device({ device, displayErrors }: DeviceProps) {
       <Link to={`/output/edit/${device.id}`} className="editBtn">
         <AdjustmentsHorizontalIcon className="h-5 w-5 text-slate-400 absolute top-2 right-2" />
       </Link>
-      <div className="plants">
+      <div className={`plants ${compact ? " compact" : ""}`}>
         {device.outputs.map((output: OutputConfig) => (
           <Plant
             device={device}

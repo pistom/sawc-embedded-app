@@ -1,18 +1,22 @@
 import { Disclosure } from '@headlessui/react'
-import { Bars3Icon, Cog8ToothIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Link, NavLink } from 'react-router-dom'
+import { ArrowsPointingOutIcon, Bars3Icon, Cog8ToothIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 
 const navigation = [
   { name: 'My plants', href: '/', current: true },
   { name: 'Schedule', href: '/schedule', current: false },
 ]
 
+
 function classNames(...classes: string[]): string {
   return classes.filter(Boolean).join(' ')
 }
 export function Navigation() {
+  const location = useLocation();
+  const isCompactView = location.pathname === '/compact';
+
   return (
-    <Disclosure as="nav" className="bg-gray-800">
+     !isCompactView && <Disclosure as="nav" className="bg-gray-800">
       {({ open, close }) => (
         <>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -58,6 +62,11 @@ export function Navigation() {
                   <div className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <NavLink to="/preferences">
                       <Cog8ToothIcon className="h-6 w-6" aria-hidden="true" />
+                    </NavLink>
+                  </div>
+                  <div className="hidden lg:block relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <NavLink to="/compact">
+                      <ArrowsPointingOutIcon className="h-6 w-6" aria-hidden="true" />
                     </NavLink>
                   </div>
                 </div>

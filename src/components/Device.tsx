@@ -32,8 +32,8 @@ export default function Device({ device, displayErrors, compact }: DeviceProps) 
         }
       }
     });
-    
-    return () => {socket.off("message")};
+
+    return () => { socket.off("message") };
   }, [device.id]);
 
   return (
@@ -51,6 +51,7 @@ export default function Device({ device, displayErrors, compact }: DeviceProps) 
             remainingTime={remainingTimes?.remainingTimes[output.id]}
             displayErrors={displayErrors}
             key={`plant_${device.id}_${output.id}`}
+            compact={compact}
           />
         ))}
       </div>

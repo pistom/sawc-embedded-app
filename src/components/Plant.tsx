@@ -11,9 +11,10 @@ interface PlantProps {
   plantMessage?: Message;
   remainingTime?: { wateringTime: number, wateringIn: number, wateringVolume: number };
   displayErrors: (plantMessage: Message) => void;
+  compact?: boolean;
 }
 
-export default function Plant({ device, output, plantMessage, remainingTime, displayErrors }: PlantProps) {
+export default function Plant({ device, output, plantMessage, remainingTime, displayErrors, compact }: PlantProps) {
   const { id: deviceId, settings: deviceSettings } = device;
   const { id, name, image, defaultVolume, sync } = output;
   const [isOn, setIsOn] = useState<boolean>(false);
@@ -24,6 +25,7 @@ export default function Plant({ device, output, plantMessage, remainingTime, dis
   const [remainingWateringTime, setRemainingWateringTime] = useState<number>(0);
   const [wateringIn, setWateringIn] = useState<number>(0);
   const [isDisabledWateringBtn, setIsDisabledWateringBtn] = useState<boolean>(false);
+  const [waterBtnLabels, setWaterBtnLabels] = useState<{ start: string, stop: string, abort: string }>({ start: 'Water', stop: 'Stop', abort: 'Abort' });
 
   useEffect(() => {
     if (remainingTime) {
@@ -41,6 +43,12 @@ export default function Plant({ device, output, plantMessage, remainingTime, dis
       setIsOn(true);
     }
   }, [remainingTime]);
+
+  useEffect(() => {
+    if (compact) {
+      setWaterBtnLabels({ start: '💦', stop: '🛑', abort: '⏹' });
+    }
+  }, [compact])
 
   useEffect(() => {
     plantMessage && displayErrors(plantMessage);
@@ -111,18 +119,20 @@ export default function Plant({ device, output, plantMessage, remainingTime, dis
       {!sync && !isOn && <span className="sync-status">Not synced <LockOpenIcon className="align-sub h-5 w-5 inline-block" /></span>}
       <img className="image bg-slate-200" src={imageSrc} alt="" />
       <div className="details">
-        {!isOn &&
+        {!isOn && !compact &&
           <Link to={`/output/edit/${deviceId}/${id}`} className="editBtn">
             <Cog6ToothIcon className="h-5 w-5 text-slate-300 absolute top-2 right-2" />
           </Link>}
         <h5 className="title">{name ?? `Output ${id}`}</h5>
         <div className="form flex gap-3 mb-3 font-normal text-gray-700">
-          <div className="flex items-center">
-            <input className="unit" type="number" disabled={isWatering || wateringIn > 0} value={wateringVolumeRaw} onChange={handleWateringVolume} />
-            <span className="unit-label">ml</span>
-          </div>
+          {!compact &&
+            <div className="flex items-center">
+              <input className="unit" type="number" disabled={isWatering || wateringIn > 0} value={wateringVolumeRaw} onChange={handleWateringVolume} />
+              <span className="unit-label">ml</span>
+            </div>
+          }
           <button className={`waterBtn btn ${!isOn ? `bg-emerald-700` : `bg-slate-700`}`} disabled={isDisabledWateringBtn} onClick={() => handleMessageSubmit(id, wateringVolume)}>
-            {!isOn ? `Water` : wateringIn > 0 ? `Abort` : `Stop`}
+            {!isOn ? waterBtnLabels.start : wateringIn > 0 ? waterBtnLabels.abort : waterBtnLabels.stop}
           </button>
         </div>
         {wateringIn > 0 && (<Timer type="scheduled" duration={wateringIn} />)}

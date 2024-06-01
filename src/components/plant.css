@@ -16,18 +16,26 @@
     @apply flex-col;
   }
 }
-@screen lg {
+@screen sm {
   .plants {
     @apply grid-cols-3;
   }
   .plants.compact {
     @apply grid-cols-5;
+    .details {
+      @apply absolute bottom-0 left-0 right-0 top-0 p-0;
+      .waterBtn {
+        @apply absolute top-1 right-1 p-3 w-10 h-10 text-sm font-medium text-center text-teal-800 rounded-full bg-white;
+      }
+    }
   }
   .plants.compact .plant .image {
-    @apply w-48 h-20;
+    @apply w-full h-40 rounded-lg;
   }
+
   .plants.compact .plant .title {
-    @apply text-lg text-ellipsis whitespace-nowrap overflow-hidden;
+    @apply text-lg text-ellipsis whitespace-nowrap overflow-hidden w-5/6 p-2 rounded-lg;
+    background: linear-gradient(-90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
   }
   .plants.compact .plant .details {
     @apply pb-0;
@@ -61,7 +69,9 @@
 .plant .form .unit-label {
   @apply w-auto;
 }
-.plant .waterBtn, .plant .saveBtn, .plant .calibrateBtn {
+.plant .waterBtn,
+.plant .saveBtn,
+.plant .calibrateBtn {
   @apply items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-teal-800;
 }
 .plant .waterBtn:hover {

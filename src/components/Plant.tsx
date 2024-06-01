@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import socket from '../socket.ts';
 import Timer from "./Timer";
-import { Cog6ToothIcon, LockOpenIcon } from '@heroicons/react/24/solid'
+import { Cog6ToothIcon, LockOpenIcon, NoSymbolIcon, PlayIcon, StopIcon } from '@heroicons/react/16/solid'
 import { Link } from "react-router-dom";
 import './plant.css';
 
@@ -25,7 +25,7 @@ export default function Plant({ device, output, plantMessage, remainingTime, dis
   const [remainingWateringTime, setRemainingWateringTime] = useState<number>(0);
   const [wateringIn, setWateringIn] = useState<number>(0);
   const [isDisabledWateringBtn, setIsDisabledWateringBtn] = useState<boolean>(false);
-  const [waterBtnLabels, setWaterBtnLabels] = useState<{ start: string, stop: string, abort: string }>({ start: 'Water', stop: 'Stop', abort: 'Abort' });
+  const [waterBtnLabels, setWaterBtnLabels] = useState<{ start: ReactNode, stop: ReactNode, abort: ReactNode }>({ start: 'Water', stop: 'Stop', abort: 'Abort' });
 
   useEffect(() => {
     if (remainingTime) {
@@ -46,7 +46,11 @@ export default function Plant({ device, output, plantMessage, remainingTime, dis
 
   useEffect(() => {
     if (compact) {
-      setWaterBtnLabels({ start: '💦', stop: '🛑', abort: '⏹' });
+      const startLabel = <PlayIcon className="h-5 w-5 text-slate-400 absolute top-2 right-2" />
+      const stopLabel = <StopIcon className="h-5 w-5 text-slate-400 absolute top-2 right-2" />
+      const abortLabel = <NoSymbolIcon className="h-5 w-5 text-slate-400 absolute top-2 right-2" />
+
+      setWaterBtnLabels({ start: startLabel, stop: stopLabel, abort: abortLabel });
     }
   }, [compact])
 
